@@ -1,0 +1,47 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+header, footer {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+}
+
+main {
+    padding: 2rem;
+}
+
+form {
+    display: inline-block;
+    text-align: left;
+    max-width: 300px;
+    width: 100%;
+    margin: auto;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 1rem;
+    }
+
+    form {
+        max-width: 100%;
+    }
+}
