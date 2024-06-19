@@ -14,13 +14,15 @@ index.html
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Start</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h1>Welcome to the Algorithm Evaluation</h1>
-    <button onclick="navigateTo('node1.html')">Start</button>
+    <button id="startButton">Start</button>
     <script src="scripts.js"></script>
 </body>
 </html>
+
 
 
 node1.html
@@ -31,6 +33,7 @@ node1.html
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Node 1</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body data-node="1">
     <h1>Decision Point 1</h1>
@@ -51,36 +54,39 @@ node1.html
 </body>
 </html>
 
+
 script.js
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('decisionForm');
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent the default form submission
-            processDecision();
-        });
-    }
+$(document).ready(function() {
+    // Handle form submission
+    $('#decisionForm').on('submit', function(event) {
+        event.preventDefault();  // Prevent the default form submission
+        processDecision();
+    });
+
+    // Handle start button click
+    $('#startButton').on('click', function() {
+        navigateTo('node1.html');
+    });
 });
 
 function processDecision() {
-    const form = document.getElementById('decisionForm');
-    const formData = new FormData(form);
+    const formData = $('#decisionForm').serializeArray();
+    const data = {};
 
     // Convert formData to an object
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value;
+    $.each(formData, function(index, field) {
+        data[field.name] = field.value;
     });
 
-    // Logic to determine the next page based on form data and current page
+    // Example logic to determine the next page
     let nextPage = 'default.html';  // Default next page
 
-    const currentPage = document.body.getAttribute('data-node');
+    const currentPage = $('body').data('node');
     switch(currentPage) {
-        case '1':
-            if (data.heartRate < 60) {
+        case 1:
+            if (data.heartRate && data.heartRate < 60) {
                 nextPage = 'node_bradycardia.html';
-            } else if (data.heartRate > 100) {
+            } else if (data.heartRate && data.heartRate > 100) {
                 nextPage = 'node_tachycardia.html';
             } else if (data.symptoms === 'severe') {
                 nextPage = 'node_critical.html';
@@ -103,6 +109,7 @@ function processDecision() {
 function navigateTo(page) {
     window.location.href = page;
 }
+
 
 
 Benefits of This Approach

@@ -45,3 +45,13 @@ input, select, button {
         max-width: 100%;
     }
 }
+/* links */
+.siteLink a {
+    text-decoration: none;
+    color: inherit; /* Inherits the color from the h1 */
+  }
+  
+  .siteLink a:hover {
+    text-decoration: none; 
+    color:darkslategrey;
+  }

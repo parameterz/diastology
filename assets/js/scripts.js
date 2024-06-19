@@ -1,66 +1,53 @@
 $(document).ready(function() {
-    // Handle start button click
-    $('#startButton').on('click', function() {
-        loadDecisionPoint('node1');
-    });
-
-    // Handle form submission dynamically
-    $(document).on('submit', '#decisionForm', function(event) {
+    // Handle form submission
+    $('#decisionForm').on('submit', function(event) {
         event.preventDefault();  // Prevent the default form submission
         processDecision();
     });
 
-    // Handle browser back/forward buttons
-    window.onpopstate = function(event) {
-        if (event.state) {
-            loadDecisionPoint(event.state.node, false);
-        }
-    };
-});
-
-function loadDecisionPoint(node, pushState = true) {
-    $.ajax({
-        url: node + '.html',
-        method: 'GET',
-        success: function(data) {
-            $('#content').html(data);
-            if (pushState) {
-                history.pushState({ node: node }, '', node);
-            }
-        },
-        error: function() {
-            $('#content').html('<p>Error loading content.</p>');
-        }
+    // Handle start button click
+    $('#startButton').on('click', function() {
+        navigateTo('/node/start/');
     });
-}
+});
 
 function processDecision() {
     const formData = $('#decisionForm').serializeArray();
     const data = {};
 
+    // Convert formData to an object
     $.each(formData, function(index, field) {
         data[field.name] = field.value;
     });
 
-    let nextNode = 'default';  // Default next node
+    // Example logic to determine the next page
+    let nextPage = 'default.html';  // Default next page
 
     const currentPage = $('body').data('node');
     switch(currentPage) {
         case 1:
             if (data.heartRate && data.heartRate < 60) {
-                nextNode = 'node_bradycardia';
+                nextPage = 'node_bradycardia.html';
             } else if (data.heartRate && data.heartRate > 100) {
-                nextNode = 'node_tachycardia';
+                nextPage = 'node_tachycardia.html';
             } else if (data.symptoms === 'severe') {
-                nextNode = 'node_critical';
+                nextPage = 'node_critical.html';
             } else {
-                nextNode = 'node2';
+                nextPage = 'node2.html';
             }
             break;
+        // Add cases for other nodes as needed
         default:
-            nextNode = 'default';
+            nextPage = 'default.html';
     }
 
+    // Save the decision if needed
     localStorage.setItem('lastDecision', JSON.stringify(data));
-    loadDecisionPoint(nextNode);
+
+    // Navigate to the next page
+    window.location.href = nextPage;
+}
+
+function navigateTo(page) {
+    window.location.href = page;
 }
