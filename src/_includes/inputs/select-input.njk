@@ -1,0 +1,10 @@
+<div class="form-group">
+  <label for="{{ id }}">{{ label }}</label>
+  <select id="{{ id }}" name="{{ name }}" class="form-control">
+    {% for option in options %}
+      <option value="{{ option.value }}" {% if option.value == selected %}selected{% endif %}>
+        {{ option.text }}
+      </option>
+    {% endfor %}
+  </select>
+</div>

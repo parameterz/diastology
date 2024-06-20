@@ -1,0 +1,9 @@
+{
+    "nav": [
+      { "name": "Home", "url": "/" },
+      { "name": "Basic", "url": "/algorithms/basic/" },
+      { "name": "Dysfunction", "url": "/algorithms/dysfunction/" },
+      { "name": "AFib", "url": "/algorithms/afib/" }
+    ]
+  }
+  

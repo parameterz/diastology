@@ -55,3 +55,55 @@ input, select, button {
     text-decoration: none; 
     color:darkslategrey;
   }
+
+  /* NAV */
+  .menu-toggle {
+    display: none;
+    font-size: 1.5em;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  nav {
+    background-color: #444;
+  }
+  
+  .nav-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  .nav-list li {
+    margin: 0;
+  }
+  
+  .nav-list li a {
+    display: block;
+    padding: 10px 20px;
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .nav-list li a:hover {
+    background-color: #555;
+  }
+  
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+    .nav-list {
+      display: none;
+      flex-direction: column;
+    }
+  
+    .nav-list.active {
+      display: flex;
+    }
+  
+    .menu-toggle {
+      display: block;
+    }
+  }
