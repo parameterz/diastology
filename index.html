@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Solver</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="main.js"></script>
+    <script src="algorithms.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Algorithm Solver</h1>
+        <section id="select-algorithm">
+            <h2>Select Publication & Algorithm</h2>
+            <select id="algorithm-select" onchange="selectAlgorithm()">
+                <option value="">--Select Algorithm--</option>
+                <option value="ase">ASE</option>
+                <option value="bse-standard">BSE: Standard</option>
+                <option value="bse-dysfunction">BSE: LV Dysfunction</option>
+                <option value="bse-afib">BSE: Atrial Fibrillation</option>
+            </select>
+        </section>
+        
+        <div id="dynamic-content"></div>
+    </div>
+</body>
+</html>
