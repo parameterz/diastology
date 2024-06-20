@@ -3,29 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}{{foo}}</title>
+    <title>Basic</title>
     <link rel="stylesheet" href="/assets/css/styles.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/assets/js/scripts.js"></script>
 </head>
 <body>
     <header>
-        <h1 class="siteLink"><a href="/">{{ site.title }}</a></h1>
+        <h1 class="siteLink"><a href="/">Diastology Algorithms</a></h1>
         <button class="menu-toggle" aria-label="Toggle menu">☰</button>
     </header>
     <nav>
         <ul class="nav-list">
-            {% for item in navigation.nav %}
-                <li><a href="{{ item.url }}">{{ item.name }}</a></li>
-            {% endfor %}
+            
+                <li><a href="/">Home</a></li>
+            
+                <li><a href="/algorithms/basic/">Basic</a></li>
+            
+                <li><a href="/algorithms/dysfunction/">Dysfunction</a></li>
+            
+                <li><a href="/algorithms/afib/">AFib</a></li>
+            
         </ul>
     </nav>
     <main>
-        {% content | safe %}
+        replace this
     </main>
     <footer>
-        <p>&copy; 2024 {{ site.title }}</p>
-        <p>Created by {{ site.author }}</p>
+        <p>&copy; 2024 Diastology Algorithms</p>
+        <p>Created by Dan Dyar, MA, RDCS, FASE</p>
     </footer>
 </body>
 </html>
