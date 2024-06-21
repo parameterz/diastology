@@ -67,7 +67,7 @@ $(document).ready(function() {
         }
 
         collectedAnswers = []; // Reset collected answers for the next step
-        if (currentStep !== 'results') {
+        if (currentStep !== 'results' && currentStep !== 'insufficient_info') {
             showStep(currentPublication, currentAlgorithm, currentStep, currentQuestionIndex);
         }
     }
@@ -76,8 +76,10 @@ $(document).ready(function() {
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
         const availables = collectedAnswers.filter(answer => answer !== 'unavailable').length;
+        const unavailables = collectedAnswers.filter(answer => answer === 'unavailable').length;
 
-        if (availables < 2) {
+        if (unavailables >= 2) {
+            currentStep = 'insufficient_info';
             $('#dynamic-content').html(`
                 <h2>Insufficient Information</h2>
                 <p>There is not enough information to proceed. Please start over.</p>
@@ -98,7 +100,6 @@ $(document).ready(function() {
 
     function handleAgeSpecificEStep() {
         // Logic for determining next step from age_specific_e step
-        // Placeholder logic for demonstration purposes
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         if (positives > 0) {
             currentStep = 'results';
@@ -111,7 +112,6 @@ $(document).ready(function() {
 
     function handleLaStrainStep() {
         // Logic for determining next step from la_strain step
-        // Placeholder logic for demonstration purposes
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         if (positives > 0) {
             currentStep = 'lars';
@@ -122,7 +122,6 @@ $(document).ready(function() {
 
     function handleLarsStep() {
         // Logic for determining next step from lars step
-        // Placeholder logic for demonstration purposes
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         if (positives > 0) {
             currentStep = 'results';
@@ -134,7 +133,6 @@ $(document).ready(function() {
 
     function handleSupplementalParamsStep() {
         // Logic for determining next step from supplemental_params step
-        // Placeholder logic for demonstration purposes
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         if (positives > 0) {
             currentStep = 'results';
