@@ -51,6 +51,34 @@ button:hover {
     background-color: #0056b3;
 }
 
+select:hover, select:focus {
+    background-color: #f1f1f1;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+/*  results */
+.result {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+.result-normal {
+    background-color: #28a745;
+}
+
+.result-impaired {
+    background-color: #ffc107;
+}
+
+.result-elevated {
+    background-color: #dc3545;
+}
+
 @media (max-width: 600px) {
     #app {
         padding: 10px;

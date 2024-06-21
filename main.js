@@ -20,6 +20,10 @@ $(document).ready(function() {
 
     window.nextStep = function() {
         const answer = $(`#question-${currentQuestionIndex}`).val();
+        if (!answer) {
+            alert('Please select an option to proceed.');
+            return;
+        }
         collectedAnswers.push(answer);
         console.log('Collected Answers:', collectedAnswers); // Handle answers as needed
 
@@ -46,24 +50,61 @@ $(document).ready(function() {
     };
 
     function determineNextStep() {
-        switch (currentStep) {
-            case 'start':
-                handleStartStep();
-                break;
-            case 'age_specific_e':
-                handleAgeSpecificEStep();
-                break;
-            case 'la_strain':
-                handleLaStrainStep();
-                break;
-            case 'lars':
-                handleLarsStep();
-                break;
-            case 'supplemental_params':
-                handleSupplementalParamsStep();
-                break;
-            default:
-                $('#dynamic-content').html('<p>Error: Unknown step.</p>');
+        switch(currentPublication){
+            case "ase":
+                // fill these out
+                break
+            case "bse":
+                switch(currentAlgorithm){
+                    case "standard":
+                        switch (currentStep) {
+                            case 'start':
+                                handleStartStep();
+                                break;
+                            case 'age_specific_e':
+                                handleAgeSpecificEStep();
+                                break;
+                            case 'la_strain':
+                                handleLaStrainStep();
+                                break;
+                            case 'lars':
+                                handleLarsStep();
+                                break;
+                            case 'supplemental_params':
+                                handleSupplementalParamsStep();
+                                break;
+                            default:
+                                $('#dynamic-content').html('<p>Error: Unknown step.</p>');
+                        }
+                        break;
+                    case "dysfunction":
+                        switch (currentStep) {
+                            case 'start':
+                                handleDysfxStartStep();
+                                break;
+                            case "la_strain":
+                                handleDysfxLAStrainStep();
+                                break;
+                            case "supplemental_params":
+                                handleDysfxSupplementalParamsStep();
+                                break;
+                        }
+                        break;
+                    case "afib":
+                        switch (currentStep) {
+                            case "start":
+                                handleAFStartStep();
+                                break;
+                            case "step2":
+                                handleAFStep2();
+                                break;
+
+                        }
+                        break;
+
+
+                }
+
         }
 
         collectedAnswers = []; // Reset collected answers for the next step
@@ -71,8 +112,10 @@ $(document).ready(function() {
             showStep(currentPublication, currentAlgorithm, currentStep, currentQuestionIndex);
         }
     }
+    
 
     function handleStartStep() {
+        //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
         const availables = collectedAnswers.filter(answer => answer !== 'unavailable').length;
@@ -92,21 +135,78 @@ $(document).ready(function() {
             currentStep = 'age_specific_e';
         } else if (positives >= 2) {
             currentStep = 'results';
-            $('#dynamic-content').html('<h2>Result: Impaired Diastolic Function with Elevated Filling Pressures</h2>');
+            showResult('impaired-elevated');
         } else if (availables === 2 && positives === 1 && negatives === 1) {
             currentStep = 'la_strain';
         } 
     }
+
+    function handleDysfxStartStep() {
+        //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
+        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
+        const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
+        const availables = collectedAnswers.filter(answer => answer !== 'unavailable').length;
+        const unavailables = collectedAnswers.filter(answer => answer === 'unavailable').length;
+
+        if (unavailables >= 2) {
+            currentStep = 'insufficient_info';
+            $('#dynamic-content').html(`
+                <h2>Insufficient Information</h2>
+                <p>There is not enough information to proceed. Please start over.</p>
+                <button onclick="restart()">Start Over</button>
+            `);
+            return;
+        }
+
+        if (negatives >= 2) {
+            currentStep = "results";
+            showResult("impaired-normal");
+        } else if (positives >= 2) {
+            currentStep = 'results';
+            showResult('impaired-elevated');
+        } else if (availables === 2 && positives === 1 && negatives === 1) {
+            currentStep = 'la_strain';
+        } 
+    }
+
+    function handleAFStartStep() {
+        //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
+        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
+        const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
+        const availables = collectedAnswers.filter(answer => answer !== 'unavailable').length;
+        const unavailables = collectedAnswers.filter(answer => answer === 'unavailable').length;
+
+        // if (unavailables >= 2) {
+        //     currentStep = 'insufficient_info';
+        //     $('#dynamic-content').html(`
+        //         <h2>Insufficient Information</h2>
+        //         <p>There is not enough information to proceed. Please start over.</p>
+        //         <button onclick="restart()">Start Over</button>
+        //     `);
+        //     return;
+        // }
+
+        if (negatives >= 3) {
+            currentStep = "results";
+            showResult("af-normal");
+        } else if (positives >= 3) {
+            currentStep = 'results';
+            showResult('impaired-elevated');
+        } else {
+            currentStep = 'step2';
+        } 
+    }
+
 
     function handleAgeSpecificEStep() {
         // Logic for determining next step from age_specific_e step
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         if (positives > 0) {
             currentStep = 'results';
-            $('#dynamic-content').html('<h2>Result: Impaired Diastolic Function with Normal filling pressures</h2>');
+            showResult('impaired-normal');;
         } else {
             currentStep = 'results';
-            $('#dynamic-content').html('<h2>Result: Normal Diastolic Function</h2>');
+            showResult('normal');;
         }
     }
 
@@ -120,12 +220,28 @@ $(document).ready(function() {
         }
     }
 
+    function handleDysfxLAStrainStep() {
+        // Logic for determining next step from la_strain step
+        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
+        if (collectedAnswers.includes('positive') ) {
+            currentStep = 'results';
+            showResult("impaired-elevated");
+        } else if (collectedAnswers.includes("negative")) {
+            currentStep = 'results';
+            showResult("impaired-normal");
+        } else {
+            //intermediate
+            currentStep = 'supplemental_params';
+        }
+    }
+
+
     function handleLarsStep() {
         // Logic for determining next step from lars step
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         if (positives > 0) {
             currentStep = 'results';
-            $('#dynamic-content').html('<h2>Result: Impaired Diastolic Function with Elevated filling pressures</h2>');
+            showResult('impaired-elevated');;
         } else {
             currentStep = 'supplemental_params';
         }
@@ -136,11 +252,39 @@ $(document).ready(function() {
         const positives = collectedAnswers.filter(answer => answer === 'positive').length;
         if (positives > 0) {
             currentStep = 'results';
-            $('#dynamic-content').html('<h2>Result: Impaired Diastolic Function with Elevated filling pressures</h2>');
+            showResult('impaired-elevated');
         } else {
             currentStep = 'age_specific_e';
         }
     }
+
+    function handleDysfxSupplementalParamsStep() {
+        // Logic for determining next step from supplemental_params step
+        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
+        if (positives > 0) {
+            currentStep = 'results';
+            showResult('impaired-elevated');
+        } else {
+            currentStep = 'results';
+            showResult('impaired-normal');
+        }
+    }
+
+    function handleAFStep2() {
+        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
+        const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
+        if (positives >= 2) {
+            currentStep = 'results';
+            showResult('impaired-elevated');
+        } else if ( negatives >= 2) {
+            currentStep = 'results';
+            showResult('af-normal');
+        } else {
+            currentStep = 'results';
+            showResult('indeterminate');
+        }
+    }
+
 
     function showStep(publication, algorithm, step, questionIndex) {
         const stepData = algorithms[publication] && algorithms[publication][algorithm] && algorithms[publication][algorithm][step];
@@ -158,5 +302,37 @@ $(document).ready(function() {
         } else {
             $('#dynamic-content').html('<p>Error: Step data not found or no more questions.</p>');
         }
+    }
+    function showResult(result) {
+        var message, resultClass;
+        currentStep = 'results';
+        switch (result){
+            case "normal":
+                message = "Normal Diastolic Function";
+                resultClass = "result-normal";
+                break;
+            case "af-normal":
+                message = "Normal Filling Pressures";
+                resultClass = "result-normal";
+                break;
+            case "impaired-normal":
+                message = "Impaired Diastolic Function with Normal Filling Pressures";
+                resultClass = "result-impaired";
+                break;
+            case "impaired-elevated":
+                message = "Impaired Diastolic Function with ELEVATED Filling Pressures";
+                resultClass = "result-elevated";
+                break;
+            case "indeterminate":
+                message = "Indeterminate Filling Pressures";
+                resultClass = "result-impaired";
+                break;
+        } 
+        $('#dynamic-content').html(`
+            <div class="result ${resultClass}">
+                <h2>${message}</h2>
+            </div>
+            <button onclick="restart()">Start Over</button>
+        `);
     }
 });
