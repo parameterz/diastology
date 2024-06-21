@@ -108,6 +108,6 @@ button:hover {
     }
 
     button {
-        margin-top: 30px; /* Add more space above the button for smaller screens */
+        margin-top: 60px; /* Add more space above the button for smaller screens */
     }
 }
