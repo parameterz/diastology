@@ -9,7 +9,7 @@ const algorithms = {
         standard: {
             start: [
                 {
-                    question: "What is the E/e' ratio?",
+                    question: "What is the average E/e' ratio?",
                     options: [
                         {value: "positive", text: ">14"},
                         {value: "negative", text: "<= 14"},
@@ -41,6 +41,45 @@ const algorithms = {
                         ]
                 },
             ],
+        },
+        dysfunction: {
+            start: [
+                {
+                question: "What is the Mitral Inflow Doppler?",
+                options: [
+                    {value: "positive", text: "E/A >= 2"},
+                    {value: "evaluate", text: "E/A <= 0.8 AND E > 50 cm/s"},
+                    {value: "evaluate", text: "E/A between 0.8 and 1.99"},
+                    {value: "negative", text: "E/A <= 0.8 AND E <= 50 cm/s"},
+                    ]
+                },
+            ],
+            step2: [
+                {
+                    question: "What is the average E/e' ratio?",
+                    options: [
+                        {value: "positive", text: ">14"},
+                        {value: "negative", text: "<= 14"},
+                        {value: "unavailable", text: "Unavailable"}
+                        ]
+                },
+                {
+                question: "What is the TR Velocity?",
+                options: [
+                    {value: "positive", text: ">2.8 m/s"},
+                    {value: "negative", text: "<= 2.8 m/s"},
+                    {value: "unavailable", text: "Unavailable"}
+                ]
+                },
+                {
+                    question: "What is the indexed LA Volume?",
+                    options: [
+                        {value: "positive", text: ">34 ml/m2"},
+                        {value: "negative", text: "<= 34 ml/m2"},
+                        {value: "unavailable", text: "Unavailable"}
+                        ]
+                },
+            ]
         }
 
     },
@@ -220,7 +259,7 @@ const algorithms = {
                 ]
                 },
                 {
-                    question: "What is the MV Evelocity?",
+                    question: "What is the MV E velocity?",
                     options: [
                         {value: "positive", text: ">= 100 cm/s"},
                         {value: "negative", text: "< 100 cm/s"},
