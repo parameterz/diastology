@@ -70,72 +70,97 @@ $(document).ready(function () {
                 handleASE2016_1StartStep();
                 break;
             }
+            
+          case "dysfunction":
+            switch (currentStep) {
+                case "start":
+                    handleASE2016_2Start();
+                    break;
+                case "step2":
+                    handleASE2016_2Step2();
+                    break;
+            }
+
+        }
         break;
-          case "bse":
-            switch (currentAlgorithm) {
-              case "standard":
-                switch (currentStep) {
-                  case "start":
-                    handleStartStep();
-                    break;
-                  case "age_specific_e":
-                    handleAgeSpecificEStep();
-                    break;
-                  case "la_strain":
-                    handleLaStrainStep();
-                    break;
-                  case "lars":
-                    handleLarsStep();
-                    break;
-                  case "supplemental_params":
-                    handleSupplementalParamsStep();
-                    break;
-                  default:
-                    $("#dynamic-content").html("<p>Error: Unknown step.</p>");
-                }
+      case "bse":
+        switch (currentAlgorithm) {
+          case "standard":
+            switch (currentStep) {
+              case "start":
+                handleStartStep();
                 break;
-              case "dysfunction":
-                switch (currentStep) {
-                  case "start":
-                    handleDysfxStartStep();
-                    break;
-                  case "la_strain":
-                    handleDysfxLAStrainStep();
-                    break;
-                  case "supplemental_params":
-                    handleDysfxSupplementalParamsStep();
-                    break;
-                }
+              case "age_specific_e":
+                handleAgeSpecificEStep();
                 break;
-              case "afib":
-                switch (currentStep) {
-                  case "start":
-                    handleAFStartStep();
-                    break;
-                  case "step2":
-                    handleAFStep2();
-                    break;
-                }
+              case "la_strain":
+                handleLaStrainStep();
                 break;
+              case "lars":
+                handleLarsStep();
+                break;
+              case "supplemental_params":
+                handleSupplementalParamsStep();
+                break;
+              default:
+                $("#dynamic-content").html(
+                  "<p>Error: Unknown step for BSE Standard.</p>"
+                );
             }
             break;
+          case "dysfunction":
+            switch (currentStep) {
+              case "start":
+                handleDysfxStartStep();
+                break;
+              case "la_strain":
+                handleDysfxLAStrainStep();
+                break;
+              case "supplemental_params":
+                handleDysfxSupplementalParamsStep();
+                break;
+              default:
+                $("#dynamic-content").html(
+                  "<p>Error: Unknown step for BSE Dysfunction.</p>"
+                );
+            }
+            break;
+          case "afib":
+            switch (currentStep) {
+              case "start":
+                handleAFStartStep();
+                break;
+              case "step2":
+                handleAFStep2();
+                break;
+              default:
+                $("#dynamic-content").html(
+                  "<p>Error: Unknown step for BSE AFib.</p>"
+                );
+            }
+            break;
+          default:
+            $("#dynamic-content").html(
+              "<p>Error: Unknown algorithm for BSE.</p>"
+            );
         }
-    
+        break;
+      default:
+        $("#dynamic-content").html("<p>Error: Unknown publication.</p>");
+    }
 
-        collectedAnswers = []; // Reset collected answers for the next step
-        if (currentStep !== "results" && currentStep !== "insufficient_info") {
-          showStep(
-            currentPublication,
-            currentAlgorithm,
-            currentStep,
-            currentQuestionIndex
-          );
-        }
+    collectedAnswers = []; // Reset collected answers for the next step
+    if (currentStep !== "results" && currentStep !== "insufficient_info") {
+      showStep(
+        currentPublication,
+        currentAlgorithm,
+        currentStep,
+        currentQuestionIndex
+      );
     }
   }
 
   function handleStartStep() {
-    //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
     const positives = collectedAnswers.filter(
       (answer) => answer === "positive"
     ).length;
@@ -170,7 +195,6 @@ $(document).ready(function () {
   }
 
   function handleDysfxStartStep() {
-    //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
     const positives = collectedAnswers.filter(
       (answer) => answer === "positive"
     ).length;
@@ -206,7 +230,6 @@ $(document).ready(function () {
   }
 
   function handleAFStartStep() {
-    //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
     const positives = collectedAnswers.filter(
       (answer) => answer === "positive"
     ).length;
@@ -219,16 +242,6 @@ $(document).ready(function () {
     const unavailables = collectedAnswers.filter(
       (answer) => answer === "unavailable"
     ).length;
-
-    // if (unavailables >= 2) {
-    //     currentStep = 'insufficient_info';
-    //     $('#dynamic-content').html(`
-    //         <h2>Insufficient Information</h2>
-    //         <p>There is not enough information to proceed. Please start over.</p>
-    //         <button onclick="restart()">Start Over</button>
-    //     `);
-    //     return;
-    // }
 
     if (negatives >= 3) {
       currentStep = "results";
@@ -258,6 +271,48 @@ $(document).ready(function () {
     } else {
       currentStep = "results";
       showResult("indeterminate");
+    }
+  }
+
+  function handleASE2016_2Start() {
+    console.log(`inside step 1 for ${currentPublication}, ${currentAlgorithm}, ${currentStep}`);
+    if (collectedAnswers.includes("negative")) {
+        currentStep = "results";
+        showResult("grade-1");
+      } else if (collectedAnswers.includes("positive")) {
+        currentStep = "results";
+        showResult("grade-3");
+      } else if (collectedAnswers.includes("evaluate")) {
+        currentStep = "step2";
+      }
+  }
+
+  function handleASE2016_2Step2() {
+    const positives = collectedAnswers.filter((answer) => answer === "positive").length;
+    const negatives = collectedAnswers.filter((answer) => answer === "negative").length;
+    const availables = collectedAnswers.filter((answer) => answer !== "unavailable").length;
+    if (availables > 2){
+        if(positives>=2){
+            currentStep = "results";
+            showResult("grade-2");
+            } else if(negatives>=2) {
+                currentStep = "results";
+                showResult("grade-1");
+                }
+    } else if (availables == 2 && positives + negatives == 2){
+        if (positives == 2){
+            currentStep = "results";
+            showResult("grade-2");
+        } else if (negatives == 2) {
+            currentStep = "results";
+            showResult("grade-2");
+        } else {
+            currentStep = "results";
+            showResult("indeterminate");
+        }
+    }
+    else{
+        showResult("insufficient_info");
     }
   }
 
@@ -399,12 +454,26 @@ $(document).ready(function () {
         message = "Normal Filling Pressures";
         resultClass = "result-normal";
         break;
+      case "grade-1":
+        message = "Grade 1 Diastolic Dysfunction with Normal Filling Pressures";
+        resultClass = "result-impaired";
+        break;
       case "impaired-normal":
         message = "Impaired Diastolic Function with Normal Filling Pressures";
         resultClass = "result-impaired";
         break;
       case "impaired-elevated":
         message = "Impaired Diastolic Function with ELEVATED Filling Pressures";
+        resultClass = "result-elevated";
+        break;
+      case "grade-2":
+        message =
+          "Grade 2 Diastolic Dysfunction with ELEVATED Filling Pressures";
+        resultClass = "result-elevated";
+        break;
+      case "grade-3":
+        message =
+          "Grade 3 Diastolic Dysfunction with ELEVATED Filling Pressures";
         resultClass = "result-elevated";
         break;
       case "indeterminate":
