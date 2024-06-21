@@ -30,10 +30,9 @@ $(document).ready(function () {
     if (citation) {
         $('#citation-content').html(`
             <h2>Citation</h2>
-            <p><strong>Title:</strong> ${citation.title}</p>
-            <p><strong>Authors:</strong> ${citation.authors}</p>
-            <p><strong>Journal:</strong> ${citation.journal}</p>
-            <p><strong>URL:</strong> <a href="${citation.url}" target="_blank">${citation.url}</a></p>
+            <p><a href="${citation.url}" target="_blank">${citation.title}</a>.</p>
+            <p>${citation.authors}</p>
+            <p>${citation.journal}</p>
         `);
     }
 }
