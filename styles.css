@@ -1,0 +1,91 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#app {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+#dynamic-content {
+    margin-top: 20px;
+}
+
+select, button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+select:focus, button:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+select:hover, select:focus {
+    background-color: #f1f1f1;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+/*  results */
+.result {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+.result-normal {
+    background-color: #28a745;
+}
+
+.result-impaired {
+    background-color: #ffc107;
+}
+
+.result-elevated {
+    background-color: #dc3545;
+}
+
+@media (max-width: 600px) {
+    #app {
+        padding: 10px;
+    }
+
+    select, button {
+        font-size: 18px;
+        padding: 12px;
+    }
+}
