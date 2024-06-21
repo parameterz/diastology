@@ -6,13 +6,42 @@ const algorithms = {
             journal: " Journal of the American Society of Echocardiography, 29(4), 277–314. (2016)",
             url: "https://pubmed.ncbi.nlm.nih.gov/27037982/",
         },
-        start: {
-            question: 'Select the first parameter:',
-            options: [
-                { value: 'la-strain', text: 'LA Strain' },
-                { value: 'lars', text: 'LARS' }
-            ]
-        },
+        standard: {
+            start: [
+                {
+                    question: "What is the E/e' ratio?",
+                    options: [
+                        {value: "positive", text: ">14"},
+                        {value: "negative", text: "<= 14"},
+                        {value: "unavailable", text: "Unavailable"}
+                        ]
+                },
+                {
+                    question: "What are the e' velocities?",
+                    options: [
+                        {value: "positive", text: "Septal < 7 OR Lateral < 10 cm/s"},
+                        {value: "negative", text: "Septal >= 7 AND Lateral >= 10 cm/s"},
+                        {value: "unavailable", text: "Unavailable"}
+                    ]
+                },
+                {
+                question: "What is the TR Velocity?",
+                options: [
+                    {value: "positive", text: ">2.8 m/s"},
+                    {value: "negative", text: "<= 2.8 m/s"},
+                    {value: "unavailable", text: "Unavailable"}
+                ]
+                },
+                {
+                    question: "What is the indexed LA Volume?",
+                    options: [
+                        {value: "positive", text: ">34 ml/m2"},
+                        {value: "negative", text: "<= 34 ml/m2"},
+                        {value: "unavailable", text: "Unavailable"}
+                        ]
+                },
+            ],
+        }
 
     },
     "bse": {

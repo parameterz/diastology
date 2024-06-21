@@ -1,297 +1,379 @@
-$(document).ready(function() {
-    let currentPublication = '';
-    let currentAlgorithm = '';
-    let currentStep = '';
-    let currentQuestionIndex = 0;
-    let collectedAnswers = [];
+$(document).ready(function () {
+  let currentPublication = "";
+  let currentAlgorithm = "";
+  let currentStep = "";
+  let currentQuestionIndex = 0;
+  let collectedAnswers = [];
 
-    window.selectAlgorithm = function() {
-        const selectedValue = $('#algorithm-select').val();
-        if (selectedValue) {
-            const [publication, algorithm] = selectedValue.split('-');
-            currentPublication = publication;
-            currentAlgorithm = algorithm || 'standard'; // Default to 'standard' if no algorithm part
-            currentStep = 'start';
-            currentQuestionIndex = 0;
-            collectedAnswers = [];
-            showStep(currentPublication, currentAlgorithm, currentStep, currentQuestionIndex);
-        }
-    };
-
-    window.nextStep = function() {
-        const answer = $(`#question-${currentQuestionIndex}`).val();
-        if (!answer) {
-            alert('Please select an option to proceed.');
-            return;
-        }
-        collectedAnswers.push(answer);
-        console.log('Collected Answers:', collectedAnswers); // Handle answers as needed
-
-        currentQuestionIndex++;
-        const stepData = algorithms[currentPublication][currentAlgorithm][currentStep];
-        if (currentQuestionIndex < stepData.length) {
-            // Show next question within the current step
-            showStep(currentPublication, currentAlgorithm, currentStep, currentQuestionIndex);
-        } else {
-            // Move to the next step
-            currentQuestionIndex = 0;
-            determineNextStep();
-        }
-    };
-
-    window.restart = function() {
-        currentPublication = '';
-        currentAlgorithm = '';
-        currentStep = '';
-        currentQuestionIndex = 0;
-        collectedAnswers = [];
-        $('#dynamic-content').html('');
-        $('#algorithm-select').val('');
-    };
-
-    function determineNextStep() {
-        switch(currentPublication){
-            case "ase":
-                // fill these out
-                break
-            case "bse":
-                switch(currentAlgorithm){
-                    case "standard":
-                        switch (currentStep) {
-                            case 'start':
-                                handleStartStep();
-                                break;
-                            case 'age_specific_e':
-                                handleAgeSpecificEStep();
-                                break;
-                            case 'la_strain':
-                                handleLaStrainStep();
-                                break;
-                            case 'lars':
-                                handleLarsStep();
-                                break;
-                            case 'supplemental_params':
-                                handleSupplementalParamsStep();
-                                break;
-                            default:
-                                $('#dynamic-content').html('<p>Error: Unknown step.</p>');
-                        }
-                        break;
-                    case "dysfunction":
-                        switch (currentStep) {
-                            case 'start':
-                                handleDysfxStartStep();
-                                break;
-                            case "la_strain":
-                                handleDysfxLAStrainStep();
-                                break;
-                            case "supplemental_params":
-                                handleDysfxSupplementalParamsStep();
-                                break;
-                        }
-                        break;
-                    case "afib":
-                        switch (currentStep) {
-                            case "start":
-                                handleAFStartStep();
-                                break;
-                            case "step2":
-                                handleAFStep2();
-                                break;
-
-                        }
-                        break;
-
-
-                }
-
-        }
-
-        collectedAnswers = []; // Reset collected answers for the next step
-        if (currentStep !== 'results' && currentStep !== 'insufficient_info') {
-            showStep(currentPublication, currentAlgorithm, currentStep, currentQuestionIndex);
-        }
+  window.selectAlgorithm = function () {
+    const selectedValue = $("#algorithm-select").val();
+    if (selectedValue) {
+      const [publication, algorithm] = selectedValue.split("-");
+      currentPublication = publication;
+      currentAlgorithm = algorithm || "standard"; // Default to 'standard' if no algorithm part
+      currentStep = "start";
+      currentQuestionIndex = 0;
+      collectedAnswers = [];
+      showStep(
+        currentPublication,
+        currentAlgorithm,
+        currentStep,
+        currentQuestionIndex
+      );
     }
+  };
+
+  window.nextStep = function () {
+    const answer = $(`#question-${currentQuestionIndex}`).val();
+    if (!answer) {
+      alert("Please select an option to proceed.");
+      return;
+    }
+    collectedAnswers.push(answer);
+    console.log("Collected Answers:", collectedAnswers); // Handle answers as needed
+
+    currentQuestionIndex++;
+    const stepData =
+      algorithms[currentPublication][currentAlgorithm][currentStep];
+    if (currentQuestionIndex < stepData.length) {
+      // Show next question within the current step
+      showStep(
+        currentPublication,
+        currentAlgorithm,
+        currentStep,
+        currentQuestionIndex
+      );
+    } else {
+      // Move to the next step
+      currentQuestionIndex = 0;
+      determineNextStep();
+    }
+  };
+
+  window.restart = function () {
+    currentPublication = "";
+    currentAlgorithm = "";
+    currentStep = "";
+    currentQuestionIndex = 0;
+    collectedAnswers = [];
+    $("#dynamic-content").html("");
+    $("#algorithm-select").val("");
+  };
+
+  function determineNextStep() {
+    switch (currentPublication) {
+      case "ase2016":
+        switch (currentAlgorithm) {
+          case "standard":
+            switch (currentStep) {
+              case "start":
+                handleASE2016_1StartStep();
+                break;
+            }
+        break;
+          case "bse":
+            switch (currentAlgorithm) {
+              case "standard":
+                switch (currentStep) {
+                  case "start":
+                    handleStartStep();
+                    break;
+                  case "age_specific_e":
+                    handleAgeSpecificEStep();
+                    break;
+                  case "la_strain":
+                    handleLaStrainStep();
+                    break;
+                  case "lars":
+                    handleLarsStep();
+                    break;
+                  case "supplemental_params":
+                    handleSupplementalParamsStep();
+                    break;
+                  default:
+                    $("#dynamic-content").html("<p>Error: Unknown step.</p>");
+                }
+                break;
+              case "dysfunction":
+                switch (currentStep) {
+                  case "start":
+                    handleDysfxStartStep();
+                    break;
+                  case "la_strain":
+                    handleDysfxLAStrainStep();
+                    break;
+                  case "supplemental_params":
+                    handleDysfxSupplementalParamsStep();
+                    break;
+                }
+                break;
+              case "afib":
+                switch (currentStep) {
+                  case "start":
+                    handleAFStartStep();
+                    break;
+                  case "step2":
+                    handleAFStep2();
+                    break;
+                }
+                break;
+            }
+            break;
+        }
     
 
-    function handleStartStep() {
-        //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
-        const availables = collectedAnswers.filter(answer => answer !== 'unavailable').length;
-        const unavailables = collectedAnswers.filter(answer => answer === 'unavailable').length;
+        collectedAnswers = []; // Reset collected answers for the next step
+        if (currentStep !== "results" && currentStep !== "insufficient_info") {
+          showStep(
+            currentPublication,
+            currentAlgorithm,
+            currentStep,
+            currentQuestionIndex
+          );
+        }
+    }
+  }
 
-        if (unavailables >= 2) {
-            currentStep = 'insufficient_info';
-            $('#dynamic-content').html(`
+  function handleStartStep() {
+    //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    const negatives = collectedAnswers.filter(
+      (answer) => answer === "negative"
+    ).length;
+    const availables = collectedAnswers.filter(
+      (answer) => answer !== "unavailable"
+    ).length;
+    const unavailables = collectedAnswers.filter(
+      (answer) => answer === "unavailable"
+    ).length;
+
+    if (unavailables >= 2) {
+      currentStep = "insufficient_info";
+      $("#dynamic-content").html(`
                 <h2>Insufficient Information</h2>
                 <p>There is not enough information to proceed. Please start over.</p>
                 <button onclick="restart()">Start Over</button>
             `);
-            return;
-        }
-
-        if (negatives >= 2) {
-            currentStep = 'age_specific_e';
-        } else if (positives >= 2) {
-            currentStep = 'results';
-            showResult('impaired-elevated');
-        } else if (availables === 2 && positives === 1 && negatives === 1) {
-            currentStep = 'la_strain';
-        } 
+      return;
     }
 
-    function handleDysfxStartStep() {
-        //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
-        const availables = collectedAnswers.filter(answer => answer !== 'unavailable').length;
-        const unavailables = collectedAnswers.filter(answer => answer === 'unavailable').length;
+    if (negatives >= 2) {
+      currentStep = "age_specific_e";
+    } else if (positives >= 2) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else if (availables === 2 && positives === 1 && negatives === 1) {
+      currentStep = "la_strain";
+    }
+  }
 
-        if (unavailables >= 2) {
-            currentStep = 'insufficient_info';
-            $('#dynamic-content').html(`
+  function handleDysfxStartStep() {
+    //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    const negatives = collectedAnswers.filter(
+      (answer) => answer === "negative"
+    ).length;
+    const availables = collectedAnswers.filter(
+      (answer) => answer !== "unavailable"
+    ).length;
+    const unavailables = collectedAnswers.filter(
+      (answer) => answer === "unavailable"
+    ).length;
+
+    if (unavailables >= 2) {
+      currentStep = "insufficient_info";
+      $("#dynamic-content").html(`
                 <h2>Insufficient Information</h2>
                 <p>There is not enough information to proceed. Please start over.</p>
                 <button onclick="restart()">Start Over</button>
             `);
-            return;
-        }
-
-        if (negatives >= 2) {
-            currentStep = "results";
-            showResult("impaired-normal");
-        } else if (positives >= 2) {
-            currentStep = 'results';
-            showResult('impaired-elevated');
-        } else if (availables === 2 && positives === 1 && negatives === 1) {
-            currentStep = 'la_strain';
-        } 
+      return;
     }
 
-    function handleAFStartStep() {
-        //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
-        const availables = collectedAnswers.filter(answer => answer !== 'unavailable').length;
-        const unavailables = collectedAnswers.filter(answer => answer === 'unavailable').length;
-
-        // if (unavailables >= 2) {
-        //     currentStep = 'insufficient_info';
-        //     $('#dynamic-content').html(`
-        //         <h2>Insufficient Information</h2>
-        //         <p>There is not enough information to proceed. Please start over.</p>
-        //         <button onclick="restart()">Start Over</button>
-        //     `);
-        //     return;
-        // }
-
-        if (negatives >= 3) {
-            currentStep = "results";
-            showResult("af-normal");
-        } else if (positives >= 3) {
-            currentStep = 'results';
-            showResult('impaired-elevated');
-        } else {
-            currentStep = 'step2';
-        } 
+    if (negatives >= 2) {
+      currentStep = "results";
+      showResult("impaired-normal");
+    } else if (positives >= 2) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else if (availables === 2 && positives === 1 && negatives === 1) {
+      currentStep = "la_strain";
     }
+  }
 
+  function handleAFStartStep() {
+    //console.log(`the current source algorithm is ${currentPublication}, ${currentAlgorithm}`);
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    const negatives = collectedAnswers.filter(
+      (answer) => answer === "negative"
+    ).length;
+    const availables = collectedAnswers.filter(
+      (answer) => answer !== "unavailable"
+    ).length;
+    const unavailables = collectedAnswers.filter(
+      (answer) => answer === "unavailable"
+    ).length;
 
-    function handleAgeSpecificEStep() {
-        // Logic for determining next step from age_specific_e step
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        if (positives > 0) {
-            currentStep = 'results';
-            showResult('impaired-normal');;
-        } else {
-            currentStep = 'results';
-            showResult('normal');;
-        }
+    // if (unavailables >= 2) {
+    //     currentStep = 'insufficient_info';
+    //     $('#dynamic-content').html(`
+    //         <h2>Insufficient Information</h2>
+    //         <p>There is not enough information to proceed. Please start over.</p>
+    //         <button onclick="restart()">Start Over</button>
+    //     `);
+    //     return;
+    // }
+
+    if (negatives >= 3) {
+      currentStep = "results";
+      showResult("af-normal");
+    } else if (positives >= 3) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else {
+      currentStep = "step2";
     }
+  }
 
-    function handleLaStrainStep() {
-        // Logic for determining next step from la_strain step
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        if (positives > 0) {
-            currentStep = 'lars';
-        } else {
-            currentStep = 'age_specific_e';
-        }
+  function handleASE2016_1StartStep() {
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    const negatives = collectedAnswers.filter(
+      (answer) => answer === "negative"
+    ).length;
+
+    if (negatives > 2) {
+      currentStep = "results";
+      showResult("normal");
+    } else if (positives > 2) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else {
+      currentStep = "results";
+      showResult("indeterminate");
     }
+  }
 
-    function handleDysfxLAStrainStep() {
-        // Logic for determining next step from la_strain step
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        if (collectedAnswers.includes('positive') ) {
-            currentStep = 'results';
-            showResult("impaired-elevated");
-        } else if (collectedAnswers.includes("negative")) {
-            currentStep = 'results';
-            showResult("impaired-normal");
-        } else {
-            //intermediate
-            currentStep = 'supplemental_params';
-        }
+  function handleAgeSpecificEStep() {
+    // Logic for determining next step from age_specific_e step
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    if (positives > 0) {
+      currentStep = "results";
+      showResult("impaired-normal");
+    } else {
+      currentStep = "results";
+      showResult("normal");
     }
+  }
 
-
-    function handleLarsStep() {
-        // Logic for determining next step from lars step
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        if (positives > 0) {
-            currentStep = 'results';
-            showResult('impaired-elevated');;
-        } else {
-            currentStep = 'supplemental_params';
-        }
+  function handleLaStrainStep() {
+    // Logic for determining next step from la_strain step
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    if (positives > 0) {
+      currentStep = "lars";
+    } else {
+      currentStep = "age_specific_e";
     }
+  }
 
-    function handleSupplementalParamsStep() {
-        // Logic for determining next step from supplemental_params step
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        if (positives > 0) {
-            currentStep = 'results';
-            showResult('impaired-elevated');
-        } else {
-            currentStep = 'age_specific_e';
-        }
+  function handleDysfxLAStrainStep() {
+    // Logic for determining next step from la_strain step
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    if (collectedAnswers.includes("positive")) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else if (collectedAnswers.includes("negative")) {
+      currentStep = "results";
+      showResult("impaired-normal");
+    } else {
+      //intermediate
+      currentStep = "supplemental_params";
     }
+  }
 
-    function handleDysfxSupplementalParamsStep() {
-        // Logic for determining next step from supplemental_params step
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        if (positives > 0) {
-            currentStep = 'results';
-            showResult('impaired-elevated');
-        } else {
-            currentStep = 'results';
-            showResult('impaired-normal');
-        }
+  function handleLarsStep() {
+    // Logic for determining next step from lars step
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    if (positives > 0) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else {
+      currentStep = "supplemental_params";
     }
+  }
 
-    function handleAFStep2() {
-        const positives = collectedAnswers.filter(answer => answer === 'positive').length;
-        const negatives = collectedAnswers.filter(answer => answer === 'negative').length;
-        if (positives >= 2) {
-            currentStep = 'results';
-            showResult('impaired-elevated');
-        } else if ( negatives >= 2) {
-            currentStep = 'results';
-            showResult('af-normal');
-        } else {
-            currentStep = 'results';
-            showResult('indeterminate');
-        }
+  function handleSupplementalParamsStep() {
+    // Logic for determining next step from supplemental_params step
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    if (positives > 0) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else {
+      currentStep = "age_specific_e";
     }
+  }
 
+  function handleDysfxSupplementalParamsStep() {
+    // Logic for determining next step from supplemental_params step
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    if (positives > 0) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else {
+      currentStep = "results";
+      showResult("impaired-normal");
+    }
+  }
 
-    function showStep(publication, algorithm, step, questionIndex) {
-        const stepData = algorithms[publication] && algorithms[publication][algorithm] && algorithms[publication][algorithm][step];
-        if (stepData && Array.isArray(stepData) && stepData[questionIndex]) {
-            const questionObj = stepData[questionIndex];
-            const optionsHtml = questionObj.options.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('');
-            $('#dynamic-content').html(`
+  function handleAFStep2() {
+    const positives = collectedAnswers.filter(
+      (answer) => answer === "positive"
+    ).length;
+    const negatives = collectedAnswers.filter(
+      (answer) => answer === "negative"
+    ).length;
+    if (positives >= 2) {
+      currentStep = "results";
+      showResult("impaired-elevated");
+    } else if (negatives >= 2) {
+      currentStep = "results";
+      showResult("af-normal");
+    } else {
+      currentStep = "results";
+      showResult("indeterminate");
+    }
+  }
+
+  function showStep(publication, algorithm, step, questionIndex) {
+    const stepData =
+      algorithms[publication] &&
+      algorithms[publication][algorithm] &&
+      algorithms[publication][algorithm][step];
+    if (stepData && Array.isArray(stepData) && stepData[questionIndex]) {
+      const questionObj = stepData[questionIndex];
+      const optionsHtml = questionObj.options
+        .map((opt) => `<option value="${opt.value}">${opt.text}</option>`)
+        .join("");
+      $("#dynamic-content").html(`
                 <h2>${questionObj.question}</h2>
                 <select id="question-${questionIndex}" class="question-select">
                     <option value="">--Select--</option>
@@ -299,40 +381,42 @@ $(document).ready(function() {
                 </select>
                 <button onclick="nextStep()">Next</button>
             `);
-        } else {
-            $('#dynamic-content').html('<p>Error: Step data not found or no more questions.</p>');
-        }
+    } else {
+      $("#dynamic-content").html(
+        "<p>Error: Step data not found or no more questions.</p>"
+      );
     }
-    function showResult(result) {
-        var message, resultClass;
-        currentStep = 'results';
-        switch (result){
-            case "normal":
-                message = "Normal Diastolic Function";
-                resultClass = "result-normal";
-                break;
-            case "af-normal":
-                message = "Normal Filling Pressures";
-                resultClass = "result-normal";
-                break;
-            case "impaired-normal":
-                message = "Impaired Diastolic Function with Normal Filling Pressures";
-                resultClass = "result-impaired";
-                break;
-            case "impaired-elevated":
-                message = "Impaired Diastolic Function with ELEVATED Filling Pressures";
-                resultClass = "result-elevated";
-                break;
-            case "indeterminate":
-                message = "Indeterminate Filling Pressures";
-                resultClass = "result-impaired";
-                break;
-        } 
-        $('#dynamic-content').html(`
+  }
+  function showResult(result) {
+    var message, resultClass;
+    currentStep = "results";
+    switch (result) {
+      case "normal":
+        message = "Normal Diastolic Function";
+        resultClass = "result-normal";
+        break;
+      case "af-normal":
+        message = "Normal Filling Pressures";
+        resultClass = "result-normal";
+        break;
+      case "impaired-normal":
+        message = "Impaired Diastolic Function with Normal Filling Pressures";
+        resultClass = "result-impaired";
+        break;
+      case "impaired-elevated":
+        message = "Impaired Diastolic Function with ELEVATED Filling Pressures";
+        resultClass = "result-elevated";
+        break;
+      case "indeterminate":
+        message = "Indeterminate Filling Pressures";
+        resultClass = "result-impaired";
+        break;
+    }
+    $("#dynamic-content").html(`
             <div class="result ${resultClass}">
                 <h2>${message}</h2>
             </div>
             <button onclick="restart()">Start Over</button>
         `);
-    }
+  }
 });
