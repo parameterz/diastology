@@ -81,11 +81,15 @@ select:hover, select:focus {
 
 @media (max-width: 600px) {
     #app {
-        padding: 10px;
+        padding: 20px 10px; /* Adjust padding for smaller screens */
+    }
+
+    h1, h2 {
+        font-size: 1.2em; /* Adjust heading sizes for smaller screens */
     }
 
     select, button {
-        font-size: 18px;
-        padding: 12px;
+        font-size: 20px; /* Increase font size for touch targets */
+        padding: 20px; /* Increase padding for touch targets */
     }
 }
