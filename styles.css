@@ -92,4 +92,8 @@ select:hover, select:focus {
         font-size: 20px; /* Increase font size for touch targets */
         padding: 20px; /* Increase padding for touch targets */
     }
+
+    button {
+        margin-top: 30px; /* Add more space above the button for smaller screens */
+    }
 }

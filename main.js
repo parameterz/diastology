@@ -20,8 +20,23 @@ $(document).ready(function () {
         currentStep,
         currentQuestionIndex
       );
+      showCitation(currentPublication);
     }
   };
+
+  function showCitation(publication) {
+    //console.log(algorithms[publication].citation);
+    const citation = algorithms[publication].citation;
+    if (citation) {
+        $('#citation-content').html(`
+            <h2>Citation</h2>
+            <p><strong>Title:</strong> ${citation.title}</p>
+            <p><strong>Authors:</strong> ${citation.authors}</p>
+            <p><strong>Journal:</strong> ${citation.journal}</p>
+            <p><strong>URL:</strong> <a href="${citation.url}" target="_blank">${citation.url}</a></p>
+        `);
+    }
+}
 
   window.nextStep = function () {
     const answer = $(`#question-${currentQuestionIndex}`).val();
@@ -30,7 +45,7 @@ $(document).ready(function () {
       return;
     }
     collectedAnswers.push(answer);
-    console.log("Collected Answers:", collectedAnswers); // Handle answers as needed
+    //console.log("Collected Answers:", collectedAnswers); // Handle answers as needed
 
     currentQuestionIndex++;
     const stepData =
@@ -58,6 +73,7 @@ $(document).ready(function () {
     collectedAnswers = [];
     $("#dynamic-content").html("");
     $("#algorithm-select").val("");
+    $('#citation-content').html(''); // Clear citation content
   };
 
   function determineNextStep() {
@@ -275,7 +291,7 @@ $(document).ready(function () {
   }
 
   function handleASE2016_2Start() {
-    console.log(`inside step 1 for ${currentPublication}, ${currentAlgorithm}, ${currentStep}`);
+    //console.log(`inside step 1 for ${currentPublication}, ${currentAlgorithm}, ${currentStep}`);
     if (collectedAnswers.includes("negative")) {
         currentStep = "results";
         showResult("grade-1");
