@@ -320,7 +320,7 @@ $(document).ready(function () {
             showResult("grade-2");
         } else if (negatives == 2) {
             currentStep = "results";
-            showResult("grade-2");
+            showResult("grade-1");
         } else {
             currentStep = "results";
             showResult("indeterminate");
