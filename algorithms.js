@@ -145,15 +145,15 @@ const algorithms = {
                 {
                     question: "What is the LA Strain?",
                     options: [
-                        {value: "positive", text: "pump strain < 14% OR resevoir strain < 30%"},
-                        {value: "negative", text: "pump strain &ge; 14% OR resevoir strain &ge; 30%"}
+                        {value: "positive", text: "pump strain < 14% OR reservoir strain < 30%"},
+                        {value: "negative", text: "pump strain &ge; 14% OR reservoir strain &ge; 30%"}
                     ]
                 }
             ],
             lars:
             [
                 {
-                    question: "More specifically, What is the LARS?",
+                    question: "More specifically, What is the LA reservoir strain (LARS)?",
                     options: [
                         {value: "positive", text: "LARS < 18%"},
                         {value: "negative", text: "LARS &ge; 18%"}
