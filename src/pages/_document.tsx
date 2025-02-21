@@ -2,12 +2,13 @@ import { Html, Head, Main, NextScript } from 'next/document'
 
 export default function Document() {
   return (
-    <Html data-theme="dark">
+    <Html lang="en">
       <Head>
         <link 
           rel="stylesheet" 
-          href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css" 
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" 
         />
+        <meta name="color-scheme" content="dark light" />
       </Head>
       <body>
         <Main />
