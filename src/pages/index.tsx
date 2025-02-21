@@ -346,6 +346,7 @@ Answers: ${getAnswersDisplay()}`}
           <div className="container mx-auto px-4">
             <p>Diastolic Function Calculator &copy; {new Date().getFullYear()}</p>
           </div>
+          <div className="text-indigo-500">This text should be purple</div>
         </footer>
       </div>
     </>

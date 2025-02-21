@@ -1,6 +1,6 @@
+import '../styles/globals.css'; // Make sure this import is at the top
 import { ThemeProvider } from 'next-themes';
 import type { AppProps } from 'next/app';
-import '../styles/globals.css'; // Make sure this import is at the top
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
