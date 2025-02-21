@@ -1,0 +1,78 @@
+// src/types/algorithm.ts - Type definitions for the algorithm system
+
+// Basic types
+export type OptionValue = string;
+export type ResultKey = 
+  | 'normal' 
+  | 'af-normal' 
+  | 'grade-1' 
+  | 'grade-2' 
+  | 'grade-3'
+  | 'impaired-normal' 
+  | 'impaired-elevated' 
+  | 'indeterminate'
+  | 'insufficient_info';
+
+// Option displayed to the user
+export interface Option {
+  value: OptionValue;
+  text: string;
+}
+
+// Result definition
+export interface Result {
+  message: string;
+  class: string;
+  description: string;
+}
+
+// Citation information
+export interface Citation {
+  authors: string;
+  title: string;
+  journal: string;
+  url: string;
+}
+
+// Algorithm mode definition
+export interface AlgorithmMode {
+  id: string;
+  name: string;
+  startNodeId: string;
+}
+
+// Decision node - presents a question with options
+export interface DecisionNode {
+  id: string;
+  type: 'decision';
+  question: string;
+  options: Option[];
+  nextNodes: Record<OptionValue | '*', string>; // Maps answers to next node IDs, '*' is wildcard
+}
+
+// Evaluator node - evaluates multiple answers to determine next node
+export interface EvaluatorNode {
+  id: string;
+  type: 'evaluator';
+  evaluate: (answers: Record<string, OptionValue>) => string; // Returns next node ID
+}
+
+// Result node - displays a final result
+export interface ResultNode {
+  id: string;
+  type: 'result';
+  resultKey: ResultKey;
+}
+
+// Union type for all node types
+export type Node = DecisionNode | EvaluatorNode | ResultNode;
+
+// Complete algorithm definition
+export interface Algorithm {
+  id: string;
+  name: string;
+  citation: Citation;
+  startNodeId: string;
+  modes?: AlgorithmMode[];
+  nodes: Record<string, Node>;
+}
