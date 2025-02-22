@@ -25,6 +25,7 @@ function createResultNode(id: string, resultKey: string): ResultNode {
 const bseAlgorithm: Algorithm = {
   id: 'bse',
   name: 'BSE Diastolic Function (2024)',
+  description: 'Recently updated and published by the British Society of Echo',
   citation: {
     authors: "Robinson, S., Ring, L., Oxborough, D. et al.",
     title: "The assessment of left ventricular diastolic function: guidance and recommendations from the British Society of Echocardiography",
@@ -32,9 +33,24 @@ const bseAlgorithm: Algorithm = {
     url: "https://pubmed.ncbi.nlm.nih.gov/38825710/",
   },
   modes: [
-    { id: 'standard', name: 'Standard Algorithm', startNodeId: 'standardStart' },
-    { id: 'dysfunction', name: 'Dysfunction Algorithm', startNodeId: 'dysfunctionStart' },
-    { id: 'afib', name: 'Atrial Fibrillation Algorithm', startNodeId: 'afibStart' }
+    { 
+      id: 'standard', 
+      name: 'Standard Algorithm', 
+      description: 'Use this for normal LV function',
+      startNodeId: 'standardStart' 
+    },
+    { 
+      id: 'dysfunction', 
+      name: 'Dysfunction Algorithm', 
+      description: 'Use this for decreased EF & myocardial disease',
+      startNodeId: 'dysfunctionStart' 
+    },
+    { 
+      id: 'afib', 
+      name: 'Atrial Fibrillation Algorithm', 
+      description: 'Pretty much the only algorithm to date for AF patients',
+      startNodeId: 'afibStart' 
+    }
   ],
   startNodeId: 'standardStart',
   nodes: {

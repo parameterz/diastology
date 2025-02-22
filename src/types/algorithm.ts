@@ -38,6 +38,7 @@ export interface Citation {
 export interface AlgorithmMode {
   id: string;
   name: string;
+  description?: string;  // Added description for each mode
   startNodeId: string;
 }
 
@@ -71,8 +72,14 @@ export type Node = DecisionNode | EvaluatorNode | ResultNode;
 export interface Algorithm {
   id: string;
   name: string;
-  citation: Citation;
-  startNodeId: string;
+  description?: string;  // Added general description
+  citation: {
+    authors: string;
+    title: string;
+    journal: string;
+    url: string;
+  };
   modes?: AlgorithmMode[];
+  startNodeId: string;
   nodes: Record<string, Node>;
 }

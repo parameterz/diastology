@@ -25,6 +25,7 @@ function createResultNode(id: string, resultKey: string): ResultNode {
 const ase2016Algorithm: Algorithm = {
   id: 'ase2016',
   name: 'ASE/EACVI Diastolic Function (2016)',
+  description: 'Widely used; loved and hated by many',
   citation: {
     authors: "Nagueh, S., Smiseth, O., Appleton, C. et al.",
     title: "Recommendations for the Evaluation of Left Ventricular Diastolic Function by Echocardiography: An Update from the American Society of Echocardiography and the European Association of Cardiovascular Imaging",
@@ -32,8 +33,18 @@ const ase2016Algorithm: Algorithm = {
     url: "https://pubmed.ncbi.nlm.nih.gov/27037982/",
   },
   modes: [
-    { id: 'standard', name: '\"1st Algorithm\"', startNodeId: 'standardStart' },
-    { id: 'dysfunction', name: '\"2nd Algorithm\"', startNodeId: 'dysfunctionStart' }
+    { 
+      id: 'standard', 
+      name: '"1st Algorithm"', 
+      description: 'Use this for normal LV function',
+      startNodeId: 'standardStart' 
+    },
+    { 
+      id: 'dysfunction', 
+      name: '"2nd Algorithm"', 
+      description: 'Use this for abnormal function or myocardial disease',
+      startNodeId: 'dysfunctionStart' 
+    }
   ],
   startNodeId: 'standardStart',
   nodes: {
