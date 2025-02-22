@@ -37,7 +37,20 @@ export default function Home() {
       console.log('Current node:', node);
       setCurrentNode(node);
       
-      if (node.type === 'result') {
+      // Skip evaluator nodes and move directly to the next node
+      if (node.type === 'evaluator') {
+        navigator.submitAnswer('');
+        const nextNode = navigator.getCurrentNode();
+        setCurrentNode(nextNode);
+        
+        if (nextNode.type === 'result') {
+          const resultKey = nextNode.resultKey;
+          console.log('Result node found:', resultKey);
+          setCurrentResult(results[resultKey]);
+        } else {
+          setCurrentResult(null);
+        }
+      } else if (node.type === 'result') {
         const resultKey = node.resultKey;
         console.log('Result node found:', resultKey);
         setCurrentResult(results[resultKey]);
@@ -138,7 +151,7 @@ export default function Home() {
     <>
       <Head>
         <title>Diastolic Function Calculator</title>
-        <meta name="description" content="Calculate diastolic function using various medical algorithms" />
+        <meta name="description" content="A Collection of Diastolic Function Algorithms for Echocardiographers" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -157,17 +170,17 @@ export default function Home() {
           <div className="mx-auto max-w-4xl">
             <div className="mb-8 text-center">
               <p className="text-lg text-gray-600 dark:text-gray-300">
-                Select an algorithm and follow prompts to evaluate diastolic function
+                Select an algorithm and follow the prompts to evaluate diastolic function
               </p>
             </div>
             
             {/* Algorithm Selection Form */}
             <div className="mb-8 rounded-lg bg-white p-6 shadow-md dark:bg-dark-700">
               <form onSubmit={handleAlgorithmStart} className="space-y-6">
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="flex flex-col space-y-6">
                   <div>
                     <label htmlFor="algorithm-select" className="mb-2 block font-medium">
-                      Select Algorithm
+                      Select Source
                     </label>
                     <select 
                       id="algorithm-select"
@@ -176,7 +189,7 @@ export default function Home() {
                       required
                       className="form-select"
                     >
-                      <option value="">--Select an Algorithm--</option>
+                      <option value="">--Select Source Article--</option>
                       {algorithmOptions}
                     </select>
                   </div>
@@ -184,7 +197,7 @@ export default function Home() {
                   {modeOptions.length > 0 && (
                     <div>
                       <label htmlFor="mode-select" className="mb-2 block font-medium">
-                        Select Mode
+                        Select Algorithm
                       </label>
                       <select 
                         id="mode-select"
@@ -192,7 +205,7 @@ export default function Home() {
                         onChange={(e) => setModeId(e.target.value)}
                         className="form-select"
                       >
-                        <option value="">--Select a Mode--</option>
+                        <option value="">--Select Algorithm--</option>
                         {modeOptions}
                       </select>
                     </div>
@@ -253,34 +266,6 @@ export default function Home() {
               </div>
             )}
             
-            
-            {/* Evaluator Node (just for debugging) */}
-            {currentNode && currentNode.type === 'evaluator' && (
-              <div className="mb-8 rounded-lg bg-white p-6 shadow-md dark:bg-dark-700">
-                <h2 className="mb-4">Processing Your Results</h2>
-                <p className="mb-6 text-gray-600 dark:text-gray-300">
-                  The system is analyzing your responses to determine the result.
-                </p>
-                <button
-                  onClick={() => {
-                    // Force move to next node when on evaluator
-                    try {
-                      navigator.submitAnswer('');
-                      updateCurrentNodeAndResult();
-                    } catch (error) {
-                      console.error('Error processing evaluator:', error);
-                    }
-                  }}
-                  className="btn-primary px-6 py-3 text-base"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                  Continue
-                </button>
-              </div>
-            )}
-            
             {/* Result Panel */}
             {currentNode && currentNode.type === 'result' && currentResult && (
               <div className={`mb-8 rounded-lg p-6 shadow-md ${currentResult.class}`}>
@@ -294,6 +279,7 @@ export default function Home() {
                 </button>
               </div>
             )}
+            
             {/* Citation Panel */}
             {algorithmId && (
               <div className="mb-8 overflow-hidden rounded-lg bg-white shadow-md dark:bg-dark-700">
@@ -319,6 +305,7 @@ export default function Home() {
                 </details>
               </div>
             )}
+            
             {/* Debug Panel */}
             <div className="mt-12 rounded-lg border border-gray-200 dark:border-dark-600">
               <details>

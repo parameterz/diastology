@@ -32,8 +32,8 @@ const ase2016Algorithm: Algorithm = {
     url: "https://pubmed.ncbi.nlm.nih.gov/27037982/",
   },
   modes: [
-    { id: 'standard', name: 'Diastolic Function Evaluation', startNodeId: 'standardStart' },
-    { id: 'dysfunction', name: 'Diastolic Dysfunction Grading', startNodeId: 'dysfunctionStart' }
+    { id: 'standard', name: '\"1st Algorithm\"', startNodeId: 'standardStart' },
+    { id: 'dysfunction', name: '\"2nd Algorithm\"', startNodeId: 'dysfunctionStart' }
   ],
   startNodeId: 'standardStart',
   nodes: {
