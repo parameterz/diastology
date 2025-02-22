@@ -253,31 +253,6 @@ export default function Home() {
               </div>
             )}
             
-            {/* Citation Panel */}
-            {algorithmId && (
-              <div className="mb-8 overflow-hidden rounded-lg bg-white shadow-md dark:bg-dark-700">
-                <details>
-                  <summary className="px-6 py-3 font-medium hover:bg-gray-50 dark:hover:bg-dark-600">
-                    Citation Information
-                  </summary>
-                  <div className="space-y-3 border-t border-gray-100 px-6 py-4 dark:border-dark-600">
-                    <p className="font-bold">{algorithms[algorithmId].citation.title}</p>
-                    <p>{algorithms[algorithmId].citation.authors}</p>
-                    <p>{algorithms[algorithmId].citation.journal}</p>
-                    <p>
-                      <a 
-                        href={algorithms[algorithmId].citation.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-primary-600 hover:underline dark:text-primary-400"
-                      >
-                        View Publication
-                      </a>
-                    </p>
-                  </div>
-                </details>
-              </div>
-            )}
             
             {/* Evaluator Node (just for debugging) */}
             {currentNode && currentNode.type === 'evaluator' && (
@@ -309,7 +284,6 @@ export default function Home() {
             {/* Result Panel */}
             {currentNode && currentNode.type === 'result' && currentResult && (
               <div className={`mb-8 rounded-lg p-6 shadow-md ${currentResult.class}`}>
-                <h2 className="mb-2">Assessment Result</h2>
                 <h3 className="mb-4 text-gray-900 dark:text-white">{currentResult.message}</h3>
                 <p className="mb-6 text-gray-700 dark:text-gray-300">{currentResult.description}</p>
                 <button onClick={handleRestart} className="btn-secondary px-6 py-3 text-base">
@@ -320,7 +294,31 @@ export default function Home() {
                 </button>
               </div>
             )}
-            
+            {/* Citation Panel */}
+            {algorithmId && (
+              <div className="mb-8 overflow-hidden rounded-lg bg-white shadow-md dark:bg-dark-700">
+                <details>
+                  <summary className="px-6 py-3 font-medium hover:bg-gray-50 dark:hover:bg-dark-600">
+                    Citation Information
+                  </summary>
+                  <div className="space-y-3 border-t border-gray-100 px-6 py-4 dark:border-dark-600">
+                    <p className="font-bold">{algorithms[algorithmId].citation.title}</p>
+                    <p>{algorithms[algorithmId].citation.authors}</p>
+                    <p>{algorithms[algorithmId].citation.journal}</p>
+                    <p>
+                      <a 
+                        href={algorithms[algorithmId].citation.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary-600 hover:underline dark:text-primary-400"
+                      >
+                        View Publication
+                      </a>
+                    </p>
+                  </div>
+                </details>
+              </div>
+            )}
             {/* Debug Panel */}
             <div className="mt-12 rounded-lg border border-gray-200 dark:border-dark-600">
               <details>
@@ -344,9 +342,9 @@ Answers: ${getAnswersDisplay()}`}
         
         <footer className="mt-auto border-t border-gray-200 py-6 text-center text-sm text-gray-600 dark:border-dark-600 dark:text-gray-400">
           <div className="container mx-auto px-4">
-            <p>Diastolic Function Calculator &copy; {new Date().getFullYear()}</p>
+            <p>Diastolic Function Calculator </p>
+            <p>Dan Dyar, MA, ACS, RDCS, FASE &copy; {new Date().getFullYear()}</p>
           </div>
-          <div className="text-indigo-500">This text should be purple</div>
         </footer>
       </div>
     </>
