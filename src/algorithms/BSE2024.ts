@@ -72,8 +72,8 @@ const bseAlgorithm: Algorithm = {
       'laVolume',
       'What is the indexed LA Volume?',
       [
-        {value: 'positive', text: '> 34 ml/m2'},
-        {value: 'negative', text: '≤ 34 ml/m2'},
+        {value: 'positive', text: '> 34 ml/m²'},
+        {value: 'negative', text: '≤ 34 ml/m²'},
         {value: 'unavailable', text: 'Unavailable'}
       ],
       {
@@ -239,8 +239,8 @@ const bseAlgorithm: Algorithm = {
       'dysfunctionLaVolume',
       'What is the indexed LA Volume?',
       [
-        {value: 'positive', text: '> 34 ml/m2'},
-        {value: 'negative', text: '≤ 34 ml/m2'},
+        {value: 'positive', text: '> 34 ml/m²'},
+        {value: 'negative', text: '≤ 34 ml/m²'},
         {value: 'unavailable', text: 'Unavailable'}
       ],
       {
