@@ -43,27 +43,14 @@ const young2025Algorithm: Algorithm = {
 
   startNodeId: 'heartFailureCheck',
   nodes: {
-    // Initial check for heart failure or valve disease
-/*     'heartFailureCheck': createDecisionNode(
-      'heartFailureCheck',
-      'Does the patient have known heart failure, LV EF < 50%, or ≥ moderate valve disease?',
-      [
-        {value: 'yes', text: 'Yes'},
-        {value: 'no', text: 'No'}
-      ],
-      {
-        'yes': 'resultExclude',
-        'no': 'criteriaCollection'
-      }
-    ),
- */    
     // Collection of all four criteria
     'criteriaCollection': createDecisionNode(
       'criteriaCollection',
       'Septal e\' velocity',
       [
+        {value: 'normal', text: '≥ 7 cm/s'},
         {value: 'abnormal', text: '< 7 cm/s'},
-        {value: 'normal', text: '≥ 7 cm/s'}
+        {value: 'unavailable', text: 'Unavailable'}
       ],
       {
         '*': 'eToERatio'
@@ -75,7 +62,8 @@ const young2025Algorithm: Algorithm = {
       'E/e\' ratio (septal)',
       [
         {value: 'abnormal', text: '> 15'},
-        {value: 'normal', text: '≤ 15'}
+        {value: 'normal', text: '≤ 15'},
+        {value: 'unavailable', text: 'Unavailable'}
       ],
       {
         '*': 'trVelocity'
@@ -87,7 +75,8 @@ const young2025Algorithm: Algorithm = {
       'TR velocity',
       [
         {value: 'abnormal', text: '> 2.8 m/s'},
-        {value: 'normal', text: '≤ 2.8 m/s'}
+        {value: 'normal', text: '≤ 2.8 m/s'},
+        {value: 'unavailable', text: 'Unavailable'}
       ],
       {
         '*': 'laVolume'
@@ -99,7 +88,8 @@ const young2025Algorithm: Algorithm = {
       'LA volume index',
       [
         {value: 'abnormal', text: '> 34 mL/m²'},
-        {value: 'normal', text: '≤ 34 mL/m²'}
+        {value: 'normal', text: '≤ 34 mL/m²'},
+        {value: 'unavailable', text: 'Unavailable'}
       ],
       {
         '*': 'criteriaEvaluate'
@@ -111,23 +101,38 @@ const young2025Algorithm: Algorithm = {
       id: 'criteriaEvaluate',
       type: 'evaluator',
       evaluate: (answers: Record<string, string>) => {
-        // Count normal and abnormal results
-        const normalCount = Object.values(answers).filter(a => a === 'normal').length;
-        const abnormalCount = Object.values(answers).filter(a => a === 'abnormal').length;
+        // Filter out the heart failure check and get only criteria answers
+        const criteriaAnswers = {
+          'criteriaCollection': answers['criteriaCollection'] || '',
+          'eToERatio': answers['eToERatio'] || '',
+          'trVelocity': answers['trVelocity'] || '',
+          'laVolume': answers['laVolume'] || ''
+        };
         
-        // Skip the first question (heart failure check)
-        // Count only the 4 criteria questions
-        if (normalCount >= 3) {
-          // ≥ 3 of 4 Normal
+        // Count normal and abnormal results
+        const normalCount = Object.values(criteriaAnswers).filter(a => a === 'normal').length;
+        const abnormalCount = Object.values(criteriaAnswers).filter(a => a === 'abnormal').length;
+        const availableCount = Object.values(criteriaAnswers).filter(a => a !== 'unavailable').length;
+        
+        // We need to be able to make a determination with what we have
+        if (availableCount < 3) {
+          return 'resultInsufficientData';
+        }
+        
+        // ≥ 3 of 4 normal OR 2 of 3 normal (if exactly 3 criteria are available)
+        if (normalCount >= 3 || (availableCount === 3 && normalCount === 2)) {
           return 'normalFillingPressure';
-        } else if (abnormalCount >= 3) {
-          // ≥ 3 of 4 Abnormal
+        } 
+        // ≥ 3 of 4 abnormal OR 2 of 3 abnormal (if exactly 3 criteria are available)
+        else if (abnormalCount >= 3 || (availableCount === 3 && abnormalCount === 2)) {
           return 'elevatedFillingPressure';
-        } else if (normalCount === 2 && abnormalCount === 2) {
-          // 2 and 2
+        } 
+        // Only for the 2 normal/2 abnormal case with all 4 criteria
+        else if (normalCount === 2 && abnormalCount === 2 && availableCount === 4) {
           return 'resultIndeterminate';
-        } else {
-          // This shouldn't happen with 4 criteria but for safety
+        } 
+        // This is a safety catch for any other edge cases
+        else {
           return 'resultIndeterminate';
         }
       }
@@ -139,11 +144,11 @@ const young2025Algorithm: Algorithm = {
       'E/A ratio',
       [
         {value: 'greater', text: '> 0.8'},
-        {value: 'less_equal', text: '≤ 0.8'}
+        {value: 'less_equal', text: '≤ 0.8'},
       ],
       {
         'greater': 'resultNormal',
-        'less_equal': 'resultGrade1'
+        'less_equal': 'resultGrade1',
       }
     ),
     
@@ -153,11 +158,11 @@ const young2025Algorithm: Algorithm = {
       'E/A ratio',
       [
         {value: 'greater_equal', text: '≥ 2'},
-        {value: 'less', text: '< 2'}
+        {value: 'less', text: '< 2'},
       ],
       {
         'less': 'resultGrade2',
-        'greater_equal': 'resultGrade3'
+        'greater_equal': 'resultGrade3',
       }
     ),
     
@@ -167,7 +172,10 @@ const young2025Algorithm: Algorithm = {
     'resultGrade2': createResultNode('resultGrade2', 'grade-2'),
     'resultGrade3': createResultNode('resultGrade3', 'grade-3'),
     'resultIndeterminate': createResultNode('resultIndeterminate', 'indeterminate'),
-    'resultExclude': createResultNode('resultExclude', 'exclude')
+    'resultExclude': createResultNode('resultExclude', 'exclude'),
+    'resultInsufficientData': createResultNode('resultInsufficientData', 'insufficient_info'),
+    'resultNormalUnspecified': createResultNode('resultNormalUnspecified', 'insufficient_info'),
+    'resultAbnormalUnspecified': createResultNode('resultAbnormalUnspecified', 'insufficient_info')
   }
 };
 

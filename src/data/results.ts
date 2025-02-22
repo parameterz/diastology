@@ -15,12 +15,12 @@ export const results: Record<ResultKey, Result> = {
     'grade-1': {
         message: 'Grade I Diastolic Dysfunction',
         class: 'result-impaired',
-        description: 'The heart is filling normally during diastole, but relaxation is impaired.'
+        description: 'Impaired relaxation with NORMAL Filling Pressures.'
     },
     'impaired-normal': {
         message: 'Impaired Relaxation, Normal Filling Pressures',
         class: 'result-impaired',
-        description: 'The heart is filling normally during diastole, but relaxation is impaired.'
+        description: 'Impaired relaxation with NORMAL Filling Pressures.'
     },
     'impaired-elevated': {
         message: 'Impaired Diastolic Function with ELEVATED Filling Pressures',
