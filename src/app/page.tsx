@@ -43,24 +43,6 @@ export default function HomePage() {
               </Link>
             )}
 
-            <details className="mt-4">
-              <summary className="cursor-pointer text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">
-                Citation Information
-              </summary>
-              <div className="mt-2 space-y-1 text-sm">
-                <p className="font-semibold">{algo.citation.title}</p>
-                <p>{algo.citation.authors}</p>
-                <p>{algo.citation.journal}</p>
-                <a
-                  href={algo.citation.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary-600 hover:underline dark:text-primary-400"
-                >
-                  View Publication
-                </a>
-              </div>
-            </details>
           </div>
         ))}
       </div>
