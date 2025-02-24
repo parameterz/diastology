@@ -1,8 +1,8 @@
 // src/algorithms/index.ts - Combine all algorithms
 import { Algorithm } from '../types/algorithm';
-import ase2016Algorithm from './ASE2016';
-import bseAlgorithm from './BSE2024';
-import young2025Algorithm from './Young2025';
+import ase2016Algorithm from '../app/algorithms/ase2016/ASE2016';
+import bseAlgorithm from '../app/algorithms/bse2024/BSE2024';
+import young2025Algorithm from '../app/algorithms/mayo2025/Young2025';
 
 // Export all algorithms as a collection
 const algorithms: Record<string, Algorithm> = {

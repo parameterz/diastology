@@ -1,88 +1,58 @@
-'use client';
+// src/app/algorithms/[algorithm]/page.tsx
+// This is a Server Component by default
+import { Metadata } from 'next'
+import { readFile } from 'fs/promises'
+import matter from 'gray-matter'
+import path from 'path'
+import { AlgorithmContent } from './components/AlgorithmContent'
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { AlgorithmNavigator } from '@/services/AlgorithmNavigator';
-import { algorithms } from '@/algorithms';
-import { results } from '@/data/results';
+interface PageProps {
+  params: {
+    algorithm: string
+  }
+}
 
-export default function AlgorithmPage({ params }: { params: { algorithm: string } }) {
-  const searchParams = useSearchParams();
-  const modeId = searchParams.get('mode');
-  const algorithmId = params.algorithm;
+interface FrontMatter {
+  title: string
+  description: string
+  keywords: string[]
+  authors: string
+  citation: string
+}
 
-  const [navigator] = useState<AlgorithmNavigator>(
-    () => new AlgorithmNavigator(algorithms)
-  );
-  const [currentNode, setCurrentNode] = useState<any>(null);
-  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
-  const [currentResult, setCurrentResult] = useState<any>(null);
+// This runs on the server at build/request time
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const contentPath = path.join(process.cwd(), `src/app/algorithms/${params.algorithm}/content.md`)
+  const content = await readFile(contentPath, 'utf8')
+  const { data } = matter<FrontMatter>(content)
+  
+  return {
+    title: data.title,
+    description: data.description,
+    keywords: data.keywords,
+  }
+}
 
-  useEffect(() => {
-    // Start the algorithm when the component mounts
-    if (algorithmId) {
-      navigator.startAlgorithm(algorithmId, modeId || undefined);
-      updateCurrentNodeAndResult();
-    }
-  }, [algorithmId, modeId]);
-
-  // The rest of your existing logic from index.tsx...
-  const updateCurrentNodeAndResult = () => {
-    if (!algorithmId) {
-      setCurrentNode(null);
-      setCurrentResult(null);
-      return;
-    }
-
-    try {
-      const node = navigator.getCurrentNode();
-      setCurrentNode(node);
-
-      if (node.type === 'evaluator') {
-        navigator.submitAnswer('');
-        const nextNode = navigator.getCurrentNode();
-        setCurrentNode(nextNode);
-
-        if (nextNode.type === 'result') {
-          setCurrentResult(results[nextNode.resultKey]);
-        } else {
-          setCurrentResult(null);
-        }
-      } else if (node.type === 'result') {
-        setCurrentResult(results[node.resultKey]);
-      } else {
-        setCurrentResult(null);
-      }
-    } catch (error) {
-      console.error('Error updating node and result:', error);
-      setCurrentNode(null);
-      setCurrentResult(null);
-    }
-  };
-
-  // Rest of your component logic...
-  // Include handleSubmitAnswer, handleGoBack, handleRestart functions
+// This is our main Server Component
+export default async function Page({ params }: PageProps) {
+  const contentPath = path.join(process.cwd(), `src/app/algorithms/${params.algorithm}/content.md`)
+  const content = await readFile(contentPath, 'utf8')
+  const { data, content: markdownContent } = matter<FrontMatter>(content)
 
   return (
-    <div className="mx-auto max-w-4xl">
-      {/* Question Panel */}
-      {currentNode && currentNode.type === 'decision' && (
-        <div className="mb-8 rounded-lg bg-white p-6 shadow-md dark:bg-dark-700">
-          {/* Your existing question panel JSX */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Pass the parsed content to our client component */}
+      <AlgorithmContent 
+        content={markdownContent}
+        frontmatter={data}
+      />
+      
+      <div className="sticky top-4 self-start">
+        <div className="p-4 bg-white dark:bg-dark-700 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Algorithm Navigator</h2>
+          <p>Interactive navigator coming soon...</p>
         </div>
-      )}
-
-      {/* Result Panel */}
-      {currentNode && currentNode.type === 'result' && currentResult && (
-        <div className={`mb-8 rounded-lg p-6 shadow-md ${currentResult.class}`}>
-          {/* Your existing result panel JSX */}
-        </div>
-      )}
-
-      {/* Debug Panel */}
-      <div className="mt-12 rounded-lg border border-gray-200 dark:border-dark-600">
-        {/* Your existing debug panel JSX */}
       </div>
     </div>
-  );
+  )
 }

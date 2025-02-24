@@ -1,5 +1,5 @@
 // src/algorithms/ase2016.ts - ASE 2016 Algorithm
-import { Algorithm, DecisionNode, ResultNode } from '../types/algorithm';
+import { Algorithm, DecisionNode, ResultNode } from '../../../types/algorithm';
 
 // Helper function for creating standard decision nodes
 function createDecisionNode(id: string, question: string, options: any[], nextNodes: any): DecisionNode {
