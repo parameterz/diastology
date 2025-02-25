@@ -1,5 +1,4 @@
 // src/app/algorithms/[algorithm]/page.tsx
-// This is a Server Component by default
 import { Metadata } from 'next'
 import { readFile } from 'fs/promises'
 import matter from 'gray-matter'
@@ -12,12 +11,18 @@ interface PageProps {
   }
 }
 
+interface CitationData {
+  authors: string;
+  title: string;
+  journal: string;
+  url: string;
+}
+
 interface FrontMatter {
-  title: string
-  description: string
-  keywords: string[]
-  authors: string
-  citation: string
+  title: string;
+  description: string;
+  keywords: string[];
+  citation: CitationData;
 }
 
 // This runs on the server at build/request time
