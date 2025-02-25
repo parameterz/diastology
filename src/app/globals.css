@@ -81,4 +81,63 @@
   details > div {
     @apply px-4 py-2;
   }
+
+  /* Improved styling for code blocks */
+  pre {
+    @apply overflow-auto rounded-md p-4 bg-gray-100 dark:bg-dark-700;
+  }
+  /* Enhanced typography for the prose content */
+  .prose {
+    @apply max-w-none;
+  }
+  
+  .prose h1 {
+    @apply text-3xl font-bold mb-6 mt-8;
+  }
+  
+  .prose h2 {
+    @apply text-2xl font-semibold mb-4 mt-8;
+  }
+  
+  .prose h3 {
+    @apply text-xl font-semibold mb-3 mt-6;
+  }
+  
+  .prose p {
+    @apply mb-4 leading-relaxed text-base;
+  }
+  
+  .prose ul, .prose ol {
+    @apply mb-4 pl-6;
+  }
+  
+  .prose li {
+    @apply mb-2 leading-relaxed;
+  }
+  
+  .prose li > p {
+    @apply mb-2;
+  }
+  
+  .prose strong {
+    @apply font-semibold;
+  }
+  
+  /* Improved spacing between sections */
+  .prose > * + * {
+    @apply mt-4;
+  }
+  
+  /* Dark mode adjustments */
+  .dark .prose {
+    @apply text-gray-200;
+  }
+  
+  .dark .prose strong {
+    @apply text-gray-100;
+  }
+  
+  .dark .prose a {
+    @apply text-blue-400 hover:text-blue-300;
+  }
 }
