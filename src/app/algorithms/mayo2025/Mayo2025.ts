@@ -22,8 +22,8 @@ function createResultNode(id: string, resultKey: string): ResultNode {
 }
 
 // Define the Young 2025 algorithm
-const young2025Algorithm: Algorithm = {
-    id: 'young2025',
+const mayo2025Algorithm: Algorithm = {
+  id: 'mayo2025',
     name: 'Young et al. Diastolic Function (2025)',
     description: 'From the Mayo Clinic',
     citation: {
@@ -179,4 +179,4 @@ const young2025Algorithm: Algorithm = {
   }
 };
 
-export default young2025Algorithm;
+export default mayo2025Algorithm;

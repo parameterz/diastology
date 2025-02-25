@@ -22,8 +22,8 @@ function createResultNode(id: string, resultKey: string): ResultNode {
 }
 
 // Define the BSE algorithm
-const bseAlgorithm: Algorithm = {
-  id: 'bse',
+const bse2024Algorithm: Algorithm = {
+  id: 'bse2024',
   name: 'BSE Diastolic Function (2024)',
   description: 'Recently updated and published by the British Society of Echo',
   citation: {
@@ -496,4 +496,4 @@ const bseAlgorithm: Algorithm = {
   }
 };
 
-export default bseAlgorithm;
+export default bse2024Algorithm;
