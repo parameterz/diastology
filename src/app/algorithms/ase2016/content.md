@@ -12,7 +12,7 @@ citation:
 # ASE 2016 Diastolic Function Algorithms
 
 These are the 2 algorithms from the 2016 ASE Guidelines. The "_First Algorithm_" is intended to be used on patients with normal 
-function and really only characterizes the filling conditions as "normal" or "abnormal" with a giant gray area of "indeterminate" diastolic function.
+function and really only characterizes the filling conditions as "normal" or "abnormal" with a fall-through of "indeterminate" diastolic function which nets a lot of patients.
 
 The "_Second Algorithm_" is intended for patients with abnormal LV systolic function or myocardial disease (with normal function).
 

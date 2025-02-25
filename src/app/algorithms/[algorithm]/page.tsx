@@ -4,10 +4,14 @@ import { readFile } from 'fs/promises'
 import matter from 'gray-matter'
 import path from 'path'
 import { AlgorithmContent } from './components/AlgorithmContent'
+import { AlgorithmNavigator } from './components/AlgorithmNavigator'
 
 interface PageProps {
   params: {
     algorithm: string
+  },
+  searchParams: {
+    mode?: string
   }
 }
 
@@ -26,38 +30,67 @@ interface FrontMatter {
 }
 
 // This runs on the server at build/request time
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const contentPath = path.join(process.cwd(), `src/app/algorithms/${params.algorithm}/content.md`)
-  const content = await readFile(contentPath, 'utf8')
-  const { data } = matter<FrontMatter>(content)
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  // Await the params object before accessing its properties
+  const params = await props.params;
+  const algorithm = params.algorithm;
   
-  return {
-    title: data.title,
-    description: data.description,
-    keywords: data.keywords,
+  const contentPath = path.join(process.cwd(), `src/app/algorithms/${algorithm}/content.md`)
+  try {
+    const content = await readFile(contentPath, 'utf8')
+    const { data } = matter<FrontMatter>(content)
+    
+    return {
+      title: data.title,
+      description: data.description,
+      keywords: data.keywords,
+    }
+  } catch (error) {
+    console.error(`Error loading metadata for algorithm ${algorithm}:`, error)
+    return {
+      title: 'Algorithm Details',
+      description: 'Diastolic function assessment algorithm',
+    }
   }
 }
 
 // This is our main Server Component
-export default async function Page({ params }: PageProps) {
-  const contentPath = path.join(process.cwd(), `src/app/algorithms/${params.algorithm}/content.md`)
-  const content = await readFile(contentPath, 'utf8')
-  const { data, content: markdownContent } = matter<FrontMatter>(content)
+export default async function Page(props: PageProps) {
+  // Await both params and searchParams before accessing properties
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+  
+  const algorithm = params.algorithm;
+  const mode = searchParams?.mode;
+  
+  try {
+    const contentPath = path.join(process.cwd(), `src/app/algorithms/${algorithm}/content.md`)
+    const content = await readFile(contentPath, 'utf8')
+    const { data, content: markdownContent } = matter<FrontMatter>(content)
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Pass the parsed content to our client component */}
-      <AlgorithmContent 
-        content={markdownContent}
-        frontmatter={data}
-      />
-      
-      <div className="sticky top-4 self-start">
-        <div className="p-4 bg-white dark:bg-dark-700 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Algorithm Navigator</h2>
-          <p>Interactive navigator coming soon...</p>
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Pass the parsed content to our client component */}
+        <AlgorithmContent 
+          content={markdownContent}
+          frontmatter={data}
+        />
+        
+        <div className="sticky top-4 self-start">
+          <AlgorithmNavigator 
+            algorithmId={algorithm} 
+            modeId={mode}
+          />
         </div>
       </div>
-    </div>
-  )
+    )
+  } catch (error) {
+    console.error(`Error loading algorithm ${algorithm}:`, error)
+    return (
+      <div className="p-4 bg-red-50 text-red-800 rounded-lg">
+        <h2 className="text-xl font-bold">Error Loading Algorithm</h2>
+        <p>There was a problem loading this algorithm. Please try again or select a different algorithm.</p>
+      </div>
+    )
+  }
 }
