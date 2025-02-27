@@ -1,5 +1,5 @@
-// src/algorithms/ase2016.ts - ASE 2016 Algorithm
-import { Algorithm, DecisionNode, ResultNode } from '../../../types/algorithm';
+// src/algorithms/ase2016.ts - Updated ASE 2016 Algorithm
+import { Algorithm, DecisionNode, ResultNode, EvaluatorNode } from '../../../types/algorithm';
 
 // Helper function for creating standard decision nodes
 function createDecisionNode(id: string, question: string, options: any[], nextNodes: any): DecisionNode {
@@ -34,21 +34,27 @@ const ase2016Algorithm: Algorithm = {
   },
   modes: [
     { 
+      id: 'integrated', 
+      name: 'Integrated Approach', 
+      description: 'Start with the 1st algorithm which may progress to the 2nd algorithm',
+      startNodeId: 'standardStart' 
+    },
+    { 
       id: 'standard', 
-      name: '"1st Algorithm"', 
-      description: 'Use this for normal LV function',
+      name: '"1st Algorithm" Only', 
+      description: 'Only use the 1st algorithm for normal LV function',
       startNodeId: 'standardStart' 
     },
     { 
       id: 'dysfunction', 
-      name: '"2nd Algorithm"', 
-      description: 'Use this for abnormal function or myocardial disease',
+      name: '"2nd Algorithm" Only', 
+      description: 'Skip to the 2nd algorithm for abnormal function or myocardial disease',
       startNodeId: 'dysfunctionStart' 
     }
   ],
   startNodeId: 'standardStart',
   nodes: {
-    // Standard algorithm nodes
+    // Standard algorithm nodes (1st Algorithm)
     'standardStart': createDecisionNode(
       'standardStart',
       'What is the average E/e\' ratio?',
@@ -105,35 +111,48 @@ const ase2016Algorithm: Algorithm = {
       id: 'standardEvaluate',
       type: 'evaluator',
       evaluate: (answers: Record<string, string>) => {
-        console.log(answers);
         const positives = Object.values(answers).filter(a => a === 'positive').length;
         const negatives = Object.values(answers).filter(a => a === 'negative').length;
         
         if (negatives > 2) {
           return 'resultNormal';
         } else if (positives > 2) {
-          return 'resultImpairedElevated';
+          // This is where we bridge to the 2nd algorithm
+          // Instead of going directly to a result, we transition to the 2nd algorithm
+          return 'transitionToDysfunction';
         } else {
           return 'resultIndeterminate';
         }
       }
     },
     
-    // Dysfunction algorithm nodes
-    'dysfunctionStart': createDecisionNode(
-      'dysfunctionStart',
-      'What is the Mitral Inflow Doppler?',
+    // Transition node to 2nd algorithm
+    'transitionToDysfunction': createDecisionNode(
+      'transitionToDysfunction',
+      'The 1st algorithm indicates diastolic dysfunction with elevated filling pressures. Let\'s further categorize with the 2nd algorithm.',
       [
-        {value: 'positive', text: 'E/A ≥ 2'},
-        {value: 'evaluateHighE', text: 'E/A ≤ 0.8 AND E > 50 cm/s'},
-        {value: 'evaluateMid', text: 'E/A between 0.8 and 1.99'},
-        {value: 'negative', text: 'E/A ≤ 0.8 AND E ≤ 50 cm/s'}
+        {value: 'continue', text: 'Continue to 2nd Algorithm'}
       ],
       {
-        'positive': 'resultGrade3',
-        'negative': 'resultGrade1',
-        'evaluateHighE': 'dysfunctionStep2',
-        'evaluateMid': 'dysfunctionStep2'
+        'continue': 'dysfunctionStart'
+      }
+    ),
+    
+    // Dysfunction algorithm nodes (2nd Algorithm)
+    'dysfunctionStart': createDecisionNode(
+      'dysfunctionStart',
+      'What is the Mitral Inflow Pattern (E/A ratio)?',
+      [
+        {value: 'gte2', text: 'E/A ≥ 2'},
+        {value: 'lt08_high_e', text: 'E/A ≤ 0.8 AND E > 50 cm/s'},
+        {value: 'mid_range', text: 'E/A between 0.8 and 1.99'},
+        {value: 'lt08_low_e', text: 'E/A ≤ 0.8 AND E ≤ 50 cm/s'}
+      ],
+      {
+        'gte2': 'resultGrade3',
+        'lt08_low_e': 'resultGrade1',
+        'lt08_high_e': 'dysfunctionStep2',
+        'mid_range': 'dysfunctionStep2'
       }
     ),
     
@@ -167,8 +186,8 @@ const ase2016Algorithm: Algorithm = {
       'dysfunctionLA',
       'What is the indexed LA Volume?',
       [
-        {value: 'positive', text: '> 34 ml/m2'},
-        {value: 'negative', text: '≤ 34 ml/m2'},
+        {value: 'positive', text: '> 34 ml/m²'},
+        {value: 'negative', text: '≤ 34 ml/m²'},
         {value: 'unavailable', text: 'Unavailable'}
       ],
       {
@@ -181,8 +200,11 @@ const ase2016Algorithm: Algorithm = {
       type: 'evaluator',
       evaluate: (answers: Record<string, string>) => {
         // Get only the answers from step2 onwards (exclude the initial mitral inflow question)
-        const step2Answers = { ...answers };
-        delete step2Answers['dysfunctionStart'];
+        const step2Answers = { 
+          'dysfunctionStep2': answers['dysfunctionStep2'] || answers['standardStart'], // Reuse E/e' from 1st algorithm if available
+          'dysfunctionTR': answers['dysfunctionTR'] || answers['trVelocity'], // Reuse TR from 1st algorithm if available
+          'dysfunctionLA': answers['dysfunctionLA'] || answers['laVolume'] // Reuse LA volume from 1st algorithm if available
+        };
         
         const positives = Object.values(step2Answers).filter(a => a === 'positive').length;
         const negatives = Object.values(step2Answers).filter(a => a === 'negative').length;
