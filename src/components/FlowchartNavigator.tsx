@@ -3,17 +3,23 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Check, AlertCircle, ArrowLeft, RotateCcw } from 'lucide-react';
 import algorithms from '@/algorithms';
-import { AlgorithmNavigator } from '@/services/AlgorithmNavigator';
 import { Node, DecisionNode, EvaluatorNode, ResultNode, OptionValue } from '@/types/algorithm';
+
+// Dynamic import to avoid SSR issues
+import dynamic from 'next/dynamic';
+
+// Remove direct import of AlgorithmNavigator
+// import { AlgorithmNavigator } from '@/services/AlgorithmNavigator';
 
 interface FlowchartNavigatorProps {
   algorithmId: string;
   modeId?: string;
 }
 
+// Create a component that only renders on the client side
 const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, modeId }) => {
-  // Initialize navigator with all algorithms
-  const [navigator] = useState(() => new AlgorithmNavigator(algorithms));
+  // State for navigator
+  const [navigator, setNavigator] = useState<any>(null);
   
   // Track visible nodes and their state
   const [visibleNodes, setVisibleNodes] = useState<string[]>([]);
@@ -24,24 +30,121 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
   // Result state
   const [result, setResult] = useState<any>(null);
   const [citation, setCitation] = useState<any>(null);
+  
+  // Track if the last node we processed was an evaluator
+  const [lastNodeWasEvaluator, setLastNodeWasEvaluator] = useState<boolean>(false);
+  
+  // Loading state
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Start algorithm when component mounts
+  // Initialize navigator on client-side only
   useEffect(() => {
-    try {
-      navigator.startAlgorithm(algorithmId, modeId);
-      const startNode = navigator.getCurrentNode();
-      setCurrentNodeId(startNode.id);
-      setVisibleNodes([startNode.id]);
-      setExpandedNodes(new Set([startNode.id]));
-      setCitation(navigator.getCitation());
-    } catch (error) {
-      console.error("Error starting algorithm:", error);
-    }
+    // Import the AlgorithmNavigator dynamically to avoid SSR issues
+    const initNavigator = async () => {
+      try {
+        setIsLoading(true);
+        // Dynamically import the AlgorithmNavigator
+        const { AlgorithmNavigator } = await import('@/services/AlgorithmNavigator');
+        // Create a new instance with the new keyword
+        const nav = new AlgorithmNavigator(algorithms);
+        setNavigator(nav);
+        
+        // Initialize the algorithm
+        nav.startAlgorithm(algorithmId, modeId);
+        const startNode = nav.getCurrentNode();
+        setCurrentNodeId(startNode.id);
+        setVisibleNodes([startNode.id]);
+        setExpandedNodes(new Set([startNode.id]));
+        setCitation(nav.getCitation());
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error initializing navigator:", err);
+        setError(`Error initializing: ${err instanceof Error ? err.message : String(err)}`);
+        setIsLoading(false);
+      }
+    };
+    
+    initNavigator();
   }, [algorithmId, modeId]);
+
+  // Don't render anything until loading is complete
+  if (isLoading) {
+    return (
+      <div className="space-y-4 bg-white dark:bg-dark-700 p-4 rounded-lg shadow">
+        <h2 className="text-xl font-semibold dark:text-white">Loading Algorithm...</h2>
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 dark:bg-dark-600 rounded w-2/3 mb-4"></div>
+          <div className="h-6 bg-gray-200 dark:bg-dark-600 rounded w-full mb-2"></div>
+          <div className="h-6 bg-gray-200 dark:bg-dark-600 rounded w-5/6 mb-2"></div>
+          <div className="h-6 bg-gray-200 dark:bg-dark-600 rounded w-full"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show error state
+  if (error || !navigator) {
+    return (
+      <div className="space-y-4 bg-white dark:bg-dark-700 p-4 rounded-lg shadow">
+        <h2 className="text-xl font-semibold text-red-600 dark:text-red-400">Error Loading Algorithm</h2>
+        <p className="text-gray-700 dark:text-gray-300">
+          {error || "Failed to initialize the algorithm navigator."}
+        </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  // Process the next node after selection
+  const processNextNode = () => {
+    try {
+      const nextNode = navigator.getCurrentNode();
+      
+      // Check if we're at a result node
+      if (nextNode.type === 'result') {
+        const resultData = navigator.getResult();
+        setResult(resultData);
+        return true;
+      } else {
+        // Add next node to visible and expanded sets
+        setVisibleNodes(prev => [...prev, nextNode.id]);
+        setExpandedNodes(prev => new Set([...prev, nextNode.id]));
+        
+        // Set focus to next node
+        setCurrentNodeId(nextNode.id);
+        
+        // If the next node is an evaluator, we need to handle it immediately
+        if (nextNode.type === 'evaluator') {
+          setLastNodeWasEvaluator(true);
+          // For evaluator nodes, we need to trigger evaluation automatically
+          setTimeout(() => {
+            handleSelection(nextNode.id, "Auto-evaluation", "auto");
+          }, 300); // Small delay for visual feedback
+        } else {
+          setLastNodeWasEvaluator(false);
+        }
+        
+        return false;
+      }
+    } catch (error) {
+      console.error("Error processing next node:", error);
+      return false;
+    }
+  };
 
   // Handle option selection
   const handleSelection = (nodeId: string, displayValue: string, value: OptionValue) => {
     try {
+      // Check if the current node is an evaluator node
+      const currentNode = algorithms[algorithmId].nodes[nodeId];
+      const isEvaluator = currentNode?.type === 'evaluator';
+      
       // Store selection for display purposes
       setSelections(prev => ({
         ...prev,
@@ -51,19 +154,16 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
       // Submit answer to navigator
       navigator.submitAnswer(value);
       
-      // Get next node
-      const nextNode = navigator.getCurrentNode();
+      // Process the next node
+      const foundResult = processNextNode();
       
-      // Check if we've reached a result
-      if (nextNode.type === 'result') {
-        setResult(navigator.getResult());
-      } else {
-        // Add next node to visible and expanded sets
-        setVisibleNodes(prev => [...prev, nextNode.id]);
-        setExpandedNodes(prev => new Set([...prev, nextNode.id]));
-        
-        // Set focus to next node
-        setCurrentNodeId(nextNode.id);
+      // If we just processed an evaluator and didn't find a result, check again
+      if ((isEvaluator || lastNodeWasEvaluator) && !foundResult) {
+        // Double-check if we're at a result node now
+        if (navigator.isAtResult()) {
+          const resultData = navigator.getResult();
+          setResult(resultData);
+        }
       }
     } catch (error) {
       console.error("Error processing selection:", error);
@@ -95,6 +195,7 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
       
       // Clear result if we had one
       setResult(null);
+      setLastNodeWasEvaluator(false);
     }
   };
 
@@ -107,6 +208,7 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
     setExpandedNodes(new Set([startNode.id]));
     setSelections({});
     setResult(null);
+    setLastNodeWasEvaluator(false);
   };
 
   // Render a single node in the flowchart
@@ -129,8 +231,8 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
         <div className="mb-2">
           <div 
             className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors
-              ${isActive ? 'bg-blue-100 border-2 border-blue-500' : 
-                isCompleted ? 'bg-green-50 hover:bg-green-100' : 
+              ${isActive ? 'bg-blue-100 border-2 border-blue-500 dark:bg-blue-900/30 dark:border-blue-400' : 
+                isCompleted ? 'bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30' : 
                 'bg-gray-50 hover:bg-gray-100 dark:bg-dark-700 dark:hover:bg-dark-600'}`}
             onClick={() => {
               if (!result) { // Only allow changing focus if not at result
@@ -154,7 +256,9 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-sm dark:text-white">
-                  {node.type === 'decision' ? node.question : (node.type === 'result' ? 'Result' : 'Evaluation')}
+                  {node.type === 'decision' ? node.question : 
+                   node.type === 'result' ? 'Result' : 
+                   'Evaluating answers...'}
                 </h3>
                 {isCompleted && (
                   <div className="flex items-center text-sm text-green-600 dark:text-green-400">
@@ -170,7 +274,7 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
                       key={index}
                       className={`block w-full text-left px-3 py-1 text-sm rounded 
                         ${selectedOption && selectedOption.value === option.value
-                          ? 'bg-blue-500 text-white' 
+                          ? 'bg-blue-500 text-white dark:bg-blue-600' 
                           : 'bg-white hover:bg-blue-50 border border-gray-200 dark:bg-dark-600 dark:border-dark-500 dark:hover:bg-dark-500 dark:text-white'}`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -180,6 +284,14 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
                       {option.text}
                     </button>
                   ))}
+                </div>
+              )}
+              {node.type === 'evaluator' && isActive && !result && (
+                <div className="mt-2 text-sm text-blue-600 dark:text-blue-400">
+                  <div className="flex items-center justify-center mt-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 dark:border-blue-400 mr-2"></div>
+                    <span>Evaluating your answers...</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -200,7 +312,7 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
           {navigator.canGoBack() && !result && (
             <button 
               onClick={handleGoBack}
-              className="flex items-center text-sm px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 dark:bg-dark-600 dark:hover:bg-dark-500"
+              className="flex items-center text-sm px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 dark:bg-dark-600 dark:hover:bg-dark-500 dark:text-white"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back
@@ -209,7 +321,7 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
           {(result || visibleNodes.length > 1) && (
             <button 
               onClick={handleRestart}
-              className="flex items-center text-sm px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 dark:bg-dark-600 dark:hover:bg-dark-500"
+              className="flex items-center text-sm px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 dark:bg-dark-600 dark:hover:bg-dark-500 dark:text-white"
             >
               <RotateCcw className="w-4 h-4 mr-1" />
               Restart
@@ -266,4 +378,5 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
   );
 };
 
+// Export as client-only component
 export default FlowchartNavigator;

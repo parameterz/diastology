@@ -1,5 +1,4 @@
 'use client'
-// src/app/algorithms/[algorithm]/components/AlgorithmNavigator.tsx
 
 import React, { Suspense, lazy, useState, useEffect } from 'react'
 import algorithms from '@/algorithms'
