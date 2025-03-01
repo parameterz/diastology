@@ -151,10 +151,56 @@ const ase2016Algorithm: Algorithm = {
       {
         'gte2': 'resultGrade3',
         'lt08_low_e': 'resultGrade1',
-        'lt08_high_e': 'dysfunctionStep2',
-        'mid_range': 'dysfunctionStep2'
+        'lt08_high_e': 'checkExistingAnswers',
+        'mid_range': 'checkExistingAnswers'
       }
     ),
+    
+    // New evaluator node to check for existing answers and route accordingly
+    'checkExistingAnswers': {
+      id: 'checkExistingAnswers',
+      type: 'evaluator',
+      evaluate: (answers: Record<string, string>) => {
+        // Check if we came from the first algorithm and have measurements
+        const hasEeRatio = answers['standardStart'] !== undefined;
+        const hasTrVelocity = answers['trVelocity'] !== undefined;
+        const hasLaVolume = answers['laVolume'] !== undefined;
+        
+        if (hasEeRatio && hasTrVelocity && hasLaVolume) {
+          // If we have all three, skip directly to evaluation
+          return 'reuseFirstAlgoAnswers';
+        } else {
+          // Start collecting missing parameters
+          return hasEeRatio ? 'dysfunctionTR' : 'dysfunctionStep2';
+        }
+      }
+    },
+    
+    // New node to handle reusing first algorithm answers
+    'reuseFirstAlgoAnswers': {
+      id: 'reuseFirstAlgoAnswers',
+      type: 'evaluator',
+      evaluate: (answers: Record<string, string>) => {
+        // Copy answers from first algorithm to second algorithm's keys
+        // This ensures the dysfunctionEvaluate node will work correctly
+        const updatedAnswers = { ...answers };
+        
+        if (!updatedAnswers['dysfunctionStep2'] && updatedAnswers['standardStart']) {
+          updatedAnswers['dysfunctionStep2'] = updatedAnswers['standardStart'];
+        }
+        
+        if (!updatedAnswers['dysfunctionTR'] && updatedAnswers['trVelocity']) {
+          updatedAnswers['dysfunctionTR'] = updatedAnswers['trVelocity'];
+        }
+        
+        if (!updatedAnswers['dysfunctionLA'] && updatedAnswers['laVolume']) {
+          updatedAnswers['dysfunctionLA'] = updatedAnswers['laVolume'];
+        }
+        
+        // Proceed directly to evaluation
+        return 'dysfunctionEvaluate';
+      }
+    },
     
     'dysfunctionStep2': createDecisionNode(
       'dysfunctionStep2',
@@ -199,12 +245,17 @@ const ase2016Algorithm: Algorithm = {
       id: 'dysfunctionEvaluate',
       type: 'evaluator',
       evaluate: (answers: Record<string, string>) => {
+        // Log answers to help with debugging
+        console.log("All available answers:", answers);
+        
         // Get only the answers from step2 onwards (exclude the initial mitral inflow question)
         const step2Answers = { 
           'dysfunctionStep2': answers['dysfunctionStep2'] || answers['standardStart'], // Reuse E/e' from 1st algorithm if available
           'dysfunctionTR': answers['dysfunctionTR'] || answers['trVelocity'], // Reuse TR from 1st algorithm if available
           'dysfunctionLA': answers['dysfunctionLA'] || answers['laVolume'] // Reuse LA volume from 1st algorithm if available
         };
+        
+        console.log("Step 2 answers being evaluated:", step2Answers);
         
         const positives = Object.values(step2Answers).filter(a => a === 'positive').length;
         const negatives = Object.values(step2Answers).filter(a => a === 'negative').length;
