@@ -101,18 +101,18 @@ const ase2016Algorithm: Algorithm = {
       description: "Complete assessment starting with LVEF evaluation",
       startNodeId: "initialAssessment",
     },
-    {
-      id: "standard",
-      name: '"1st Algorithm" Only',
-      description: "For normal LV function",
-      startNodeId: "standardStart",
-    },
-    {
-      id: "dysfunction",
-      name: '"2nd Algorithm" Only',
-      description: "For reduced EF or myocardial disease with normal EF",
-      startNodeId: "dysfunctionStart",
-    },
+    // {
+    //   id: "standard",
+    //   name: '"1st Algorithm" Only',
+    //   description: "For normal LV function",
+    //   startNodeId: "standardStart",
+    // },
+    // {
+    //   id: "dysfunction",
+    //   name: '"2nd Algorithm" Only',
+    //   description: "For reduced EF or myocardial disease with normal EF",
+    //   startNodeId: "dysfunctionStart",
+    // },
   ],
   startNodeId: "initialAssessment",
   nodes: {
