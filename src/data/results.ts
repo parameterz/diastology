@@ -5,7 +5,7 @@ export const results: Record<ResultKey, Result> = {
   'normal': {
     message: 'Normal Diastolic Function',
     class: 'result-normal',
-    description: 'The heart is filling normally during diastole.'
+    description: ''
   },
   'af-normal': {
     message: 'Normal Filling Pressures',
