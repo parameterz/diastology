@@ -21,7 +21,7 @@ export default function HomePage() {
     <div className="mx-auto max-w-3xl">
       <div className="mb-8 text-center">
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          Select an algorithm to evaluate diastolic function
+          Select an algorithm to start your assessment:
         </p>
       </div>
 
