@@ -5,6 +5,8 @@ import matter from 'gray-matter'
 import path from 'path'
 import { AlgorithmContent } from './components/AlgorithmContent'
 import { AlgorithmNavigator } from './components/AlgorithmNavigator'
+import { AlgorithmSummary } from './components/AlgorithmSummary'
+import { AlgorithmCitation } from './components/AlgorithmCitation'
 
 interface PageProps {
   params: {
@@ -31,7 +33,6 @@ interface FrontMatter {
 
 // This runs on the server at build/request time
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
-  // Await the params object before accessing its properties
   const params = await props.params;
   const algorithm = params.algorithm;
   
@@ -54,9 +55,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   }
 }
 
-// This is our main Server Component
 export default async function Page(props: PageProps) {
-  // Await both params and searchParams before accessing properties
   const params = await props.params;
   const searchParams = await props.searchParams;
   
@@ -69,19 +68,51 @@ export default async function Page(props: PageProps) {
     const { data, content: markdownContent } = matter<FrontMatter>(content)
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Pass the parsed content to our client component */}
-        <AlgorithmContent 
-          content={markdownContent}
-          frontmatter={data}
+      <div className="space-y-8">
+        {/* Algorithm Summary Card - Contains title, description, a brief intro */}
+        <AlgorithmSummary
+          title={data.title}
+          description={data.description}
         />
         
-        <div className="sticky top-4 self-start">
-          <AlgorithmNavigator 
-            algorithmId={algorithm} 
-            modeId={mode}
-          />
+        {/* On mobile: Navigator first, then content */}
+        <div className="block lg:hidden">
+          <div className="mb-8">
+            <AlgorithmNavigator 
+              algorithmId={algorithm} 
+              modeId={mode}
+            />
+          </div>
+          
+          <div className="mb-8">
+            <AlgorithmContent 
+              content={markdownContent}
+            />
+          </div>
         </div>
+        
+        {/* On desktop: Side-by-side layout */}
+        <div className="hidden lg:grid lg:grid-cols-2 lg:gap-8">
+          <div>
+            <div className="sticky top-4 self-start">
+              <AlgorithmNavigator 
+                algorithmId={algorithm} 
+                modeId={mode}
+              />
+            </div>
+          </div>
+          
+          <div>
+            <AlgorithmContent 
+              content={markdownContent}
+            />
+          </div>
+        </div>
+        
+        {/* Citation appears at the bottom */}
+        <AlgorithmCitation 
+          citation={data.citation}
+        />
       </div>
     )
   } catch (error) {

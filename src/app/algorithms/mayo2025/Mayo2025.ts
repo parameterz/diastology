@@ -29,8 +29,8 @@ const mayo2025Algorithm: Algorithm = {
     citation: {
       authors: "Young, Kathleen A. et al.",
       title: "Association of Impaired Relaxation Mitral Inflow Pattern (Grade 1 Diastolic Function) With Long-Term Noncardiovascular and Cardiovascular Mortality",
-      journal: "Journal of the American Society of Echocardiography (2024)",
-      url: "https://www.jasejournal.org/article/S0894-7317(24)00242-9/fulltext",
+      journal: "Journal of the American Society of Echocardiography (2025)",
+      url: "https://onlinejase.com/article/S0894-7317(25)00036-7/abstract",
     },
     modes: [
       { 

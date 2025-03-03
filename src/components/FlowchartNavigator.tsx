@@ -358,22 +358,7 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
         </div>
       )}
 
-      {/* Citation */}
-      {citation && (
-        <div className="mt-6 text-xs text-gray-500 dark:text-gray-400 border-t pt-3">
-          <p className="font-semibold">Reference:</p>
-          <p className="mt-1">{citation.authors}</p>
-          <p className="mt-1 italic">{citation.title}</p>
-          <p className="mt-1">
-            <a href={citation.url} 
-               target="_blank" 
-               rel="noopener noreferrer"
-               className="text-blue-600 dark:text-blue-400 hover:underline">
-              {citation.journal}
-            </a>
-          </p>
-        </div>
-      )}
+
     </div>
   );
 };

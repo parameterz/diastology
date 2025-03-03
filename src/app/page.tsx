@@ -27,16 +27,16 @@ export default function HomePage() {
         </div>
         
         <div className="bg-white dark:bg-dark-700 p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-3">Interactive Flow</h2>
+          <h2 className="text-xl font-semibold mb-3">Interpreted Flowcharts</h2>
           <p className="text-gray-600 dark:text-gray-300">
-            Input your echo measurements and get instant guideline-based evaluations with clear, step-by-step logic.
+            Published flowcharts have been interpreted into clear step-by-step logic with interactive decision points to guide your assessment.
           </p>
         </div>
         
         <div className="bg-white dark:bg-dark-700 p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-3">Research Citations</h2>
           <p className="text-gray-600 dark:text-gray-300">
-            Every algorithm includes full citations to reference materials and direct links to the source publications.
+            Every algorithm includes full citations to reference materials and links to the source publications.
           </p>
         </div>
       </div>
