@@ -39,7 +39,9 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const contentPath = path.join(process.cwd(), `src/app/algorithms/${algorithm}/content.md`)
   try {
     const content = await readFile(contentPath, 'utf8')
-    const { data } = matter<FrontMatter>(content)
+    // Use matter without type parameters and cast the result as needed
+    const result = matter(content);
+    const data = result.data as FrontMatter;
     
     return {
       title: data.title,
@@ -65,7 +67,10 @@ export default async function Page(props: PageProps) {
   try {
     const contentPath = path.join(process.cwd(), `src/app/algorithms/${algorithm}/content.md`)
     const content = await readFile(contentPath, 'utf8')
-    const { data, content: markdownContent } = matter<FrontMatter>(content)
+    // Use matter without type parameters and cast the result as needed
+    const result = matter(content);
+    const data = result.data as FrontMatter;
+    const markdownContent = result.content;
 
     return (
       <div className="space-y-8">
