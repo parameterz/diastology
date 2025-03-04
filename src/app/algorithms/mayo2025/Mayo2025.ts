@@ -35,7 +35,7 @@ const mayo2025Algorithm: Algorithm = {
     modes: [
       { 
         id: 'standard', 
-        name: 'Standard Algorithm', 
+        name: 'Mayo Standard Algorithm', 
         description: 'This algorithm applies to patients with an EF ≥ 50% and without heart failure or significant valve disease',
         startNodeId: 'criteriaCollection' 
       }

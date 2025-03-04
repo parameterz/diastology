@@ -1,15 +1,14 @@
+// app/components/FlowchartNavigator.tsx
+// FlowchartNavigator component for rendering algorithm flowcharts
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Check, AlertCircle, ArrowLeft, RotateCcw } from 'lucide-react';
+import { ChevronRight, Check, AlertCircle, ArrowLeft, RotateCcw, Info } from 'lucide-react';
 import algorithms from '@/algorithms';
 import { Node, DecisionNode, EvaluatorNode, ResultNode, OptionValue } from '@/types/algorithm';
 
 // Dynamic import to avoid SSR issues
 import dynamic from 'next/dynamic';
-
-// Remove direct import of AlgorithmNavigator
-// import { AlgorithmNavigator } from '@/services/AlgorithmNavigator';
 
 interface FlowchartNavigatorProps {
   algorithmId: string;
@@ -31,6 +30,10 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
   const [result, setResult] = useState<any>(null);
   const [citation, setCitation] = useState<any>(null);
   
+  // Mode info
+  const [currentMode, setCurrentMode] = useState<any>(null);
+  const [hasMultipleModes, setHasMultipleModes] = useState<boolean>(false);
+  
   // Track if the last node we processed was an evaluator
   const [lastNodeWasEvaluator, setLastNodeWasEvaluator] = useState<boolean>(false);
   
@@ -49,6 +52,19 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
         // Create a new instance with the new keyword
         const nav = new AlgorithmNavigator(algorithms);
         setNavigator(nav);
+        
+        // Check if algorithm has multiple modes
+        const algorithm = algorithms[algorithmId];
+        const multipleModes = !!(algorithm.modes && algorithm.modes.length > 1);
+        setHasMultipleModes(multipleModes);
+        
+        // Find and set current mode info if applicable
+        if (algorithm.modes && modeId) {
+          const mode = algorithm.modes.find(m => m.id === modeId);
+          if (mode) {
+            setCurrentMode(mode);
+          }
+        }
         
         // Initialize the algorithm
         nav.startAlgorithm(algorithmId, modeId);
@@ -330,6 +346,19 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
         </div>
       </div>
 
+      {/* Mode information - only show when algorithm has multiple modes */}
+      {hasMultipleModes && currentMode && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg mb-4 flex items-start">
+          <Info className="w-5 h-5 text-blue-500 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
+          <div>
+            <h3 className="font-medium text-blue-800 dark:text-blue-300 text-sm">{currentMode.name}</h3>
+            {currentMode.description && (
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">{currentMode.description}</p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Flowchart nodes */}
       <div className="space-y-1">
         {visibleNodes.map(nodeId => (
@@ -357,8 +386,6 @@ const FlowchartNavigator: React.FC<FlowchartNavigatorProps> = ({ algorithmId, mo
           </div>
         </div>
       )}
-
-
     </div>
   );
 };

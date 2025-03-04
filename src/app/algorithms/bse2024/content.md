@@ -9,11 +9,11 @@ citation:
   url: "https://pubmed.ncbi.nlm.nih.gov/38825710/"
 ---
 
-# BSE 2024 Diastolic Function Algorithms
+## Overview
 
 The British Society of Echocardiography (BSE) published updated guidelines for diastolic function assessment in 2024. These guidelines expand upon previous approaches with new parameters and dedicated algorithms for specific clinical scenarios.
 
-## Key Innovations
+### Key Innovations
 
 The BSE guidelines introduce several important innovations:
 
@@ -29,9 +29,3 @@ The BSE guidelines provide three separate algorithms:
 * **Standard Algorithm** - For patients with normal LV systolic function
 * **Dysfunction Algorithm** - For patients with reduced EF or myocardial disease with normal EF
 * **Atrial Fibrillation Algorithm** - Specifically designed for patients in AF
-
-Each algorithm follows a similar approach of evaluating key parameters (TR velocity, LA volume, E/e' ratio) before determining if filling pressures are normal or elevated in the context of any relaxation abnormalities.
-
-## Clinical Context
-
-These guidelines emphasize the importance of clinical context in interpreting diastolic function. The assessment should always be considered alongside patient symptoms, clinical presentation, and other imaging findings.

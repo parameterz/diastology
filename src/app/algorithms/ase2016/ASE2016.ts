@@ -97,7 +97,7 @@ const ase2016Algorithm: Algorithm = {
   modes: [
     {
       id: "integrated",
-      name: "Integrated Assessment",
+      name: "ASE 2016 Integrated Assessment",
       description: "Complete assessment starting with LVEF evaluation",
       startNodeId: "initialAssessment",
     },

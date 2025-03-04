@@ -35,20 +35,20 @@ const bse2024Algorithm: Algorithm = {
   modes: [
     { 
       id: 'standard', 
-      name: 'Standard Algorithm', 
+      name: 'BSE Standard Algorithm', 
       description: 'Use this for normal LV function',
       startNodeId: 'standardStart' 
     },
     { 
       id: 'dysfunction', 
-      name: 'Dysfunction Algorithm', 
+      name: 'BSE Dysfunction Algorithm', 
       description: 'Use this for decreased EF & myocardial disease',
       startNodeId: 'dysfunctionStart' 
     },
     { 
       id: 'afib', 
-      name: 'Atrial Fibrillation Algorithm', 
-      description: 'Pretty much the only algorithm to date for AF patients',
+      name: 'BSE Atrial Fibrillation Algorithm', 
+      description: 'Specifically for use in patients in atrial fibrillation',
       startNodeId: 'afibStart' 
     }
   ],
