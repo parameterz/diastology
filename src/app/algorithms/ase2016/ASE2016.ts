@@ -3,6 +3,7 @@ import {
   Algorithm,
   DecisionNode,
   ResultNode,
+  ResultKey,
   DecisionOption,
   NextNodesMap
 } from "../../../types/algorithm";
@@ -74,11 +75,11 @@ function createDecisionNode(
 }
 
 // Helper function for creating result nodes
-function createResultNode(id: string, resultKey: string): ResultNode {
+function createResultNode(id: string, resultKey: ResultKey): ResultNode {
   return {
     id,
     type: "result",
-    resultKey: resultKey as any,
+    resultKey
   };
 }
 
