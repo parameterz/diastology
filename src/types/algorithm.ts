@@ -43,12 +43,21 @@ export interface AlgorithmMode {
 }
 
 // Decision node - presents a question with options
+export interface DecisionOption {
+  value: string;
+  text: string;
+}
+
+export interface NextNodesMap {
+  [key: string]: string | undefined;  // Maps option values to next node IDs, including optional catch-all route
+}
+
 export interface DecisionNode {
   id: string;
   type: 'decision';
   question: string;
-  options: Option[];
-  nextNodes: Record<OptionValue | '*', string>; // Maps answers to next node IDs, '*' is wildcard
+  options: DecisionOption[];  // Updated to use DecisionOption
+  nextNodes: NextNodesMap;    // Updated to use NextNodesMap
 }
 
 // Evaluator node - evaluates multiple answers to determine next node

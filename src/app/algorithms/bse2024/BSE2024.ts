@@ -1,18 +1,28 @@
 // src/algorithms/BSE.ts - BSE Algorithm
-//import { Algorithm, DecisionNode, ResultNode, EvaluatorNode } from '../../../types/algorithm';
-import { Algorithm, DecisionNode, ResultNode, } from '../../../types/algorithm';
+import {
+  Algorithm,
+  DecisionNode,
+  ResultNode,
+  DecisionOption,
+  NextNodesMap
+} from "../../../types/algorithm";
+
 
 // Helper function for creating standard decision nodes
-function createDecisionNode(id: string, question: string, options: any[], nextNodes: any): DecisionNode {
+function createDecisionNode(
+  id: string,
+  question: string,
+  options: DecisionOption[],
+  nextNodes: NextNodesMap
+): DecisionNode {
   return {
     id,
-    type: 'decision',
+    type: "decision",
     question,
     options,
-    nextNodes
+    nextNodes,
   };
 }
-
 // Helper function for creating result nodes
 function createResultNode(id: string, resultKey: string): ResultNode {
   return {

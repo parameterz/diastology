@@ -3,7 +3,8 @@ import {
   Algorithm,
   DecisionNode,
   ResultNode,
-  //EvaluatorNode,
+  DecisionOption,
+  NextNodesMap
 } from "../../../types/algorithm";
 
 // Improved mapping function to handle all response types including 'unavailable'
@@ -60,8 +61,8 @@ const mapFirstAlgoToSecondAlgo = (answers: Record<string, string>) => {
 function createDecisionNode(
   id: string,
   question: string,
-  options: any[],
-  nextNodes: any
+  options: DecisionOption[],
+  nextNodes: NextNodesMap
 ): DecisionNode {
   return {
     id,
