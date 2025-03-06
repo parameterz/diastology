@@ -9,12 +9,12 @@ import { AlgorithmSummary } from './components/AlgorithmSummary'
 import { AlgorithmCitation } from './components/AlgorithmCitation'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     algorithm: string
-  },
-  searchParams: {
+  }>,
+  searchParams: Promise<{
     mode?: string
-  }
+  }>
 }
 
 interface CitationData {
